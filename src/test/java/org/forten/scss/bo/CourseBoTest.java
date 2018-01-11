@@ -2,7 +2,9 @@ package org.forten.scss.bo;
 
 import org.forten.BaseTest;
 import org.forten.dto.Message;
+import org.forten.dto.PagedRo;
 import org.forten.scss.dto.qo.CourseQoForTeacher;
+import org.forten.scss.dto.ro.PagedRoForEasyUI;
 import org.forten.scss.dto.vo.CourseForTeacher;
 import org.forten.scss.entity.Course;
 import org.forten.utils.common.DateUtil;
@@ -43,12 +45,17 @@ public class CourseBoTest extends BaseTest {
 
     @Test
     public void testQueryForTeacher(){
-        Date begin = DateUtil.getCommonTime(2017,1,1);
-        Date end = DateUtil.getCommonTime(2017,2,1);
+        Date begin = DateUtil.getCommonTime(2018,1,1);
+        Date end = DateUtil.getCommonTime(2018,12,1);
         CourseQoForTeacher qo = new CourseQoForTeacher();
+        qo.setBegin(begin);
+        qo.setEnd(end);
+        qo.setPageNo(4);
 
+        PagedRoForEasyUI<CourseForTeacher> ro = bo.queryBy(qo);
+        assertEquals(false,ro.isEmptyData());
+        assertEquals(4,ro.getRows().size());
 
-        List<CourseForTeacher> list = bo.queryBy(qo);
-        list.forEach(System.out::println);
+        ro.getRows().forEach(System.out::println);
     }
 }

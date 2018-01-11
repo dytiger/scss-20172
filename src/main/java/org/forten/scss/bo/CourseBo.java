@@ -4,8 +4,11 @@ import org.apache.ibatis.session.SqlSession;
 import org.forten.dao.HibernateDao;
 import org.forten.dao.MybatisDao;
 import org.forten.dto.Message;
+import org.forten.dto.PageInfo;
+import org.forten.dto.PagedRo;
 import org.forten.scss.dao.CourseDao;
 import org.forten.scss.dto.qo.CourseQoForTeacher;
+import org.forten.scss.dto.ro.PagedRoForEasyUI;
 import org.forten.scss.dto.vo.CourseForTeacher;
 import org.forten.scss.entity.Course;
 import org.forten.utils.system.ValidateUtil;
@@ -37,9 +40,21 @@ public class CourseBo {
     }
 
     @Transactional(readOnly = true)
-    public List<CourseForTeacher> queryBy(CourseQoForTeacher qo) {
+    public PagedRoForEasyUI<CourseForTeacher> queryBy(CourseQoForTeacher qo) {
         SqlSession session = mybatisDao.openSession();
         CourseDao courseDao = session.getMapper(CourseDao.class);
-        return courseDao.queryForTeacher(qo);
+
+        long count = courseDao.queryCountForTeacher(qo);
+        if(count==0){
+            return new PagedRoForEasyUI(new PagedRo<>());
+        }
+
+        PageInfo page = PageInfo.getInstance(qo.getPageNo(),qo.getPageSize(),(int)count);
+
+        qo.setFirst(page.getFirst());
+
+        List<CourseForTeacher> list = courseDao.queryForTeacher(qo);
+
+        return new PagedRoForEasyUI<>(new PagedRo<>(list,page));
     }
 }
