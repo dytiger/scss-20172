@@ -10,7 +10,9 @@ import org.forten.scss.dao.CourseDao;
 import org.forten.scss.dto.qo.CourseQoForTeacher;
 import org.forten.scss.dto.ro.PagedRoForEasyUI;
 import org.forten.scss.dto.vo.CourseForTeacher;
+import org.forten.scss.dto.vo.CourseUpdateForTeacher;
 import org.forten.scss.entity.Course;
+import org.forten.utils.system.BeanPropertyUtil;
 import org.forten.utils.system.ValidateUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,6 +38,21 @@ public class CourseBo {
         } catch (Exception e) {
             e.printStackTrace();
             return Message.error("课程保存失败！");
+        }
+    }
+
+    @Transactional
+    public Message doUpdate(CourseUpdateForTeacher vo){
+        // TODO 可以使用AOP技术进行以下代码的分离
+        ValidateUtil.validateThrow(vo);
+        try {
+            Course course = dao.loadById(Course.class,vo.getId());
+            BeanPropertyUtil.copy(course,vo);
+
+            return Message.info("课程修改成功！");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Message.error("课程修改失败！");
         }
     }
 

@@ -1,7 +1,6 @@
 package org.forten.scss.dto.ro;
 
 import org.forten.dto.PagedRo;
-import org.forten.utils.collection.CollectionUtil;
 
 import java.util.Collection;
 
@@ -17,14 +16,10 @@ public class PagedRoForEasyUI<T> {
     }
 
     public long getTotal() {
-        if (this.ro.getPage() == null) {
-            return 0;
-        } else {
-            return this.ro.getPage().getAmount();
-        }
+        return this.ro.getPage().getAmount();
     }
 
     public boolean isEmptyData() {
-        return CollectionUtil.isEmpty(this.ro.getData());
+        return this.ro.isEmptyData();
     }
 }
