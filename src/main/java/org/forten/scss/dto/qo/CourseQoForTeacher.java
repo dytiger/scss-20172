@@ -7,18 +7,14 @@ import java.util.Date;
 public class CourseQoForTeacher {
     private String name;
     private String status;
-    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     private Date begin;
-    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     private Date end;
 
     private int first;
-    private int pageNo;
-    private int pageSize;
+    private int page;
+    private int rows;
 
     public CourseQoForTeacher() {
-        this.pageNo = 1;
-        this.pageSize = 5;
     }
 
     public String getName() {
@@ -61,20 +57,20 @@ public class CourseQoForTeacher {
         this.first = first;
     }
 
-    public int getPageSize() {
-        return pageSize;
+    public int getPage() {
+        return page;
     }
 
-    public void setPageSize(int pageSize) {
-        this.pageSize = pageSize;
+    public void setPage(int page) {
+        this.page = page;
     }
 
-    public int getPageNo() {
-        return pageNo;
+    public int getRows() {
+        return rows;
     }
 
-    public void setPageNo(int pageNo) {
-        this.pageNo = pageNo;
+    public void setRows(int rows) {
+        this.rows = rows;
     }
 
     @Override
@@ -85,8 +81,8 @@ public class CourseQoForTeacher {
                 ", begin=" + begin +
                 ", end=" + end +
                 ", first=" + first +
-                ", pageNo=" + pageNo +
-                ", pageSize=" + pageSize +
+                ", page=" + page +
+                ", rows=" + rows +
                 '}';
     }
 }

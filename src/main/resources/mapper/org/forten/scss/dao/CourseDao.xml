@@ -54,6 +54,6 @@
 			</if>
 		</where>
 		ORDER BY id DESC
-		limit #{first},#{pageSize}
+		limit #{first},#{rows}
 	</select>
 </mapper>

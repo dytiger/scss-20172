@@ -9,12 +9,15 @@ import org.forten.scss.dto.vo.CourseUpdateForTeacher;
 import org.forten.scss.entity.Course;
 import org.forten.utils.common.StringUtil;
 import org.forten.utils.system.ValidateException;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.print.attribute.standard.PageRanges;
+import java.util.Date;
 
-@Controller
+@RestController
 public class CourseAction {
     @Resource
     private CourseBo bo;
@@ -24,23 +27,36 @@ public class CourseAction {
     Message save(@RequestBody Course course) {
         try {
             return bo.doSave(course);
-        }catch(ValidateException e){
+        } catch (ValidateException e) {
             return Message.error(StringUtil.join(e.getMessages(), "<br>"));
         }
     }
 
     @PutMapping("/course")
-    public @ResponseBody Message update(@RequestBody CourseUpdateForTeacher vo){
+    public @ResponseBody
+    Message update(@RequestBody CourseUpdateForTeacher vo) {
         try {
             return bo.doUpdate(vo);
-        }catch(ValidateException e){
+        } catch (ValidateException e) {
             return Message.error(StringUtil.join(e.getMessages(), "<br>"));
         }
     }
 
-    @PostMapping("/course/query")
+    @PostMapping(value = "/course/query")
     public @ResponseBody
-    PagedRoForEasyUI<CourseForTeacher> listPage(@RequestBody CourseQoForTeacher qo){
-        return bo.queryBy(qo);
+    PagedRoForEasyUI<CourseForTeacher> listPage(@RequestParam(defaultValue = "") String name, @RequestParam(defaultValue = "") String status,
+                                                @RequestParam(defaultValue = "") @DateTimeFormat(pattern = "yyyy-MM-dd") Date begin,
+                                                @RequestParam(defaultValue = "") @DateTimeFormat(pattern = "yyyy-MM-dd") Date end,
+                                                @RequestParam(defaultValue = "1") int page,
+                                                @RequestParam(defaultValue = "10") int rows) {
+        CourseQoForTeacher qo = new CourseQoForTeacher();
+        qo.setName(name);
+        qo.setEnd(end);
+        qo.setBegin(begin);
+        qo.setStatus(status);
+        qo.setPage(page);
+        qo.setRows(rows);
+        PagedRoForEasyUI<CourseForTeacher> ro = bo.queryBy(qo);
+        return ro;
     }
 }

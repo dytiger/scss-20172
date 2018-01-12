@@ -66,7 +66,7 @@ public class CourseBo {
             return new PagedRoForEasyUI(new PagedRo<>());
         }
 
-        PageInfo page = PageInfo.getInstance(qo.getPageNo(),qo.getPageSize(),(int)count);
+        PageInfo page = PageInfo.getInstance(qo.getPage(),qo.getRows(),(int)count);
 
         qo.setFirst(page.getFirst());
 

@@ -22,4 +22,11 @@ public class PagedRoForEasyUI<T> {
     public boolean isEmptyData() {
         return this.ro.isEmptyData();
     }
+
+    @Override
+    public String toString() {
+        return "PagedRoForEasyUI{" +
+                "ro=" + ro.toString() +
+                '}';
+    }
 }

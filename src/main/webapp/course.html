@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>课程维护</title>
+    <link rel="stylesheet" href="css/bootstrap.css"/>
+    <link rel="stylesheet" href="css/jquery-ui.css"/>
+    <link rel="stylesheet" href="css/easyui.css"/>
+    <link rel="stylesheet" href="css/color.css"/>
+    <link rel="stylesheet" href="css/icon.css"/>
+</head>
+<body>
+<div class="container">
+    <div id="tool-bar" style="padding:3px">
+        <a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="">添加新课程</a>
+        <a href="#" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="">编辑</a>
+        <span>名称</span>
+        <input id="name" style="line-height:20px;border:1px solid #ccc">
+        <span>状态</span>
+        <select id="status">
+            <option value="">请选择</option>
+            <option value="AC">待选</option>
+            <option value="PS">备选</option>
+            <option value="CM">结束</option>
+        </select>
+        <span>开始</span>
+        <input id="begin" type="date" style="line-height:20px;border:1px solid #ccc">
+        <span>结束</span>
+        <input id="end" type="date" style="line-height:20px;border:1px solid #ccc">
+        <a href="#" class="easyui-linkbutton" plain="true" onclick="doSearch()">查询</a>
+    </div>
+    <table id="course-list"></table>
+</div>
+<script src="js/jquery-3.2.1.js"></script>
+<script src="js/bootstrap.js"></script>
+<script src="js/jquery-ui.js"></script>
+<script src="js/jquery.easyui.min.js"></script>
+<script>
+    $('#course-list').datagrid({
+        url: '/course/query',
+        method: "POST",
+        pagination: true,
+        pageList:[3,5,10],
+        toolbar: "#tool-bar",
+        columns: [[
+            {field: 'id', title: 'ID', width: 100},
+            {field: 'name', title: '名称', width: 100},
+            {field: 'teacher', title: '讲师', width: 100},
+            {field: 'beginTeachTime', title: '开始上课时间', width: 100},
+            {field: 'endTeachTime', title: '结束上课时间', width: 100},
+            {field: 'beginSelectTime', title: '开始选课时间', width: 100},
+            {field: 'endSelectTime', title: '结束选课时间', width: 100},
+            {field: 'credit', title: '学分', width: 100},
+            {field: 'maxAmount', title: '课容量', width: 100}
+        ]]
+    });
+
+    function doSearch() {
+        $('#course-list').datagrid('load', {
+            "name":$("#name").val(),
+            "status":$("#status").val(),
+            "begin":$("#begin").val(),
+            "end":$("#end").val()
+        });
+    }
+</script>
+</body>
+</html>
