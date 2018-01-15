@@ -1,5 +1,7 @@
 package org.forten.scss.dto.vo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.util.Date;
 
 public class CourseForTeacher {
@@ -9,9 +11,13 @@ public class CourseForTeacher {
     private String intro;
     private String serviceTeacher;
     private String serviceTeacherTel;
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm")
     private Date beginTeachTime;
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm")
     private Date endTeachTime;
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm")
     private Date beginSelectTime;
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm")
     private Date endSelectTime;
     private String classroom;
     private int maxAmount;

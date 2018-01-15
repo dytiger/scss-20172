@@ -12,7 +12,7 @@
 <body>
 <div class="container">
     <div id="tool-bar" style="padding:3px">
-        <a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="">添加新课程</a>
+        <a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="openSaveDialog()">添加新课程</a>
         <a href="#" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="">编辑</a>
         <span>名称</span>
         <input id="name" style="line-height:20px;border:1px solid #ccc">
@@ -31,36 +31,130 @@
     </div>
     <table id="course-list"></table>
 </div>
+<!-- 保存对话框开始 -->
+<div id="save-dialog" hidden>
+    <form id="save-form" method="POST">
+        <div>
+            <label>名称：</label><input id="save-name"/>
+        </div>
+        <div>
+            <label>讲师：</label><input id="save-teacher"/>
+        </div>
+        <div>
+            <label>班主任：</label><input id="save-service-teacher"/>
+        </div>
+        <div>
+            <label>班主任电话：</label><input id="save-service-teacher-tel"/>
+        </div>
+        <div>
+            <label>上课时间：</label><input id="save-begin-teach-time" type="datetime-local"/>
+        </div>
+        <div>
+            <label>结束时间：</label><input id="save-end-teach-time" type="datetime-local"/>
+        </div>
+        <div>
+            <label>选课开始时间：</label><input id="save-begin-select-time" type="datetime-local"/>
+        </div>
+        <div>
+            <label>选课结束时间：</label><input id="save-end-select-time" type="datetime-local"/>
+        </div>
+        <div>
+            <label>教室：</label><input id="save-classroom"/>
+        </div>
+        <div>
+            <label>课容量：</label><input id="save-max-amount"/>
+        </div>
+        <div>
+            <label>学分：</label><input id="save-credit"/>
+        </div>
+    </form>
+</div>
+<div id="save-buttons" hidden>
+    <a href="#" class="easyui-linkbutton" iconCls="icon-ok" onclick="save()">保存</a>
+    <a href="#" class="easyui-linkbutton" iconCls="icon-cancel" onclick="$('#save-dialog').dialog('close')">取消</a>
+</div>
+<!-- 保存对话框结束 -->
+
 <script src="js/jquery-3.2.1.js"></script>
 <script src="js/bootstrap.js"></script>
 <script src="js/jquery-ui.js"></script>
 <script src="js/jquery.easyui.min.js"></script>
+<script src="js/easyui-lang-zh_CN.js"></script>
 <script>
     $('#course-list').datagrid({
+        title: "课程列表",
         url: '/course/query',
         method: "POST",
         pagination: true,
-        pageList:[3,5,10],
+        pageList: [3, 5, 10],
         toolbar: "#tool-bar",
         columns: [[
-            {field: 'id', title: 'ID', width: 100},
-            {field: 'name', title: '名称', width: 100},
-            {field: 'teacher', title: '讲师', width: 100},
-            {field: 'beginTeachTime', title: '开始上课时间', width: 100},
-            {field: 'endTeachTime', title: '结束上课时间', width: 100},
-            {field: 'beginSelectTime', title: '开始选课时间', width: 100},
-            {field: 'endSelectTime', title: '结束选课时间', width: 100},
-            {field: 'credit', title: '学分', width: 100},
-            {field: 'maxAmount', title: '课容量', width: 100}
+            {field: 'id', title: 'ID', checkbox: true, resizable: true},
+            {field: 'name', title: '名称', width: 100, resizable: true},
+            {field: 'teacher', title: '讲师', width: 50, resizable: true},
+            {field: 'serviceTeacher', title: '班主任', width: 50, resizable: true},
+            {field: 'serviceTeacherTel', title: '班主任电话', width: 100, resizable: true},
+            {field: 'classroom', title: '教室', width: 50, resizable: true},
+            {field: 'beginTeachTime', title: '开始上课时间', width: 150, resizable: true},
+            {field: 'endTeachTime', title: '结束上课时间', width: 150, resizable: true},
+            {field: 'beginSelectTime', title: '开始选课时间', width: 150, resizable: true},
+            {field: 'endSelectTime', title: '结束选课时间', width: 150, resizable: true},
+            {field: 'credit', title: '学分', width: 40, resizable: true},
+            {field: 'maxAmount', title: '课容量', width: 40, resizable: true},
+            {field: 'currentAmount', title: '已选人数', width: 40, resizable: true},
+            {field: 'status', title: '状态', width: 40, resizable: true}
         ]]
     });
 
     function doSearch() {
         $('#course-list').datagrid('load', {
-            "name":$("#name").val(),
-            "status":$("#status").val(),
-            "begin":$("#begin").val(),
-            "end":$("#end").val()
+            "name": $("#name").val(),
+            "status": $("#status").val(),
+            "begin": $("#begin").val(),
+            "end": $("#end").val()
+        });
+    }
+
+    function openSaveDialog() {
+        $('#save-dialog').dialog({
+            title: "添加新课程",
+            width: 350,
+            height: 400,
+            closed: false,
+            cache: false,
+            modal: true,
+            buttons: "#save-buttons"
+        });
+        $("#save-dialog").dialog('open');
+    }
+
+    function save() {
+        let course = {
+            "name":$("#save-name").val(),
+            "teacher":$("#save-teacher").val(),
+            "serviceTeacher":$("#save-service-teacher").val(),
+            "serviceTeacherTel":$("#save-service-teacher-tel").val(),
+            "classroom":$("#save-classroom").val(),
+            "beginTeachTime":$("#save-begin-teach-time").val().replace("T"," "),
+            "endTeachTime":$("#save-end-teach-time").val().replace("T"," "),
+            "beginSelectTime":$("#save-begin-select-time").val().replace("T"," "),
+            "endSelectTime":$("#save-end-select-time").val().replace("T"," "),
+            "credit":$("#save-credit").val(),
+            "maxAmount":$("#save-max-amount").val()
+        };
+
+        $.ajax({
+            url: "/course",
+            type: "POST",
+            data: JSON.stringify(course),
+            dataType: "json",
+            contentType: "application/json"
+        }).then(function (message) {
+            alert(message.messageText);
+            $("#save-form").get(0).reset();
+            $("#save-dialog").dialog('close');
+        },function (xhr) {
+            alert(xhr.responseText);
         });
     }
 </script>
