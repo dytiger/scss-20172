@@ -148,6 +148,10 @@ public class CourseForTeacher {
         this.status = status;
     }
 
+    public String getIdStr(){
+        return this.id+"";
+    }
+
     @Override
     public String toString() {
         return "CourseForTeacher{" +

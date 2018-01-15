@@ -145,7 +145,7 @@
         pageList: [3, 5, 10],
         toolbar: "#tool-bar",
         columns: [[
-            {field: 'id', title: 'ID', checkbox: true, resizable: true},
+            {field: 'idStr', title: 'ID', checkbox: true, resizable: true},
             {field: 'name', title: '名称', width: 100, resizable: true},
             {field: 'teacher', title: '讲师', width: 50, resizable: true},
             {field: 'serviceTeacher', title: '班主任', width: 50, resizable: true},
@@ -220,7 +220,7 @@
 
         console.log(JSON.stringify(course));
 
-        $("#update-id").val(course.id);
+        $("#update-id").val(course.idStr);
         $("#update-name").val(course.name);
         $("#update-teacher").val(course.teacher);
         $("#update-service-teacher").val(course.serviceTeacher);
