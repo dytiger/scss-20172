@@ -56,4 +56,23 @@
 		ORDER BY id DESC
 		limit #{first},#{rows}
 	</select>
+
+	<select id="queryForExport" resultMap="courseMapForTeacher">
+		SELECT
+		*
+		FROM course
+		<where>
+			<if test="name != null and name != ''">
+				<bind name="nameLike" value="'%'+name+'%'" />
+				AND name LIKE #{nameLike}
+			</if>
+			<if test="status != null and status != ''">
+				AND status=#{status}
+			</if>
+			<if test="begin!=null and end!=null">
+				AND begin_teach_time BETWEEN #{begin} AND #{end}
+			</if>
+		</where>
+		ORDER BY id
+	</select>
 </mapper>

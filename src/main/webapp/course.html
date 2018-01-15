@@ -14,20 +14,23 @@
     <div id="tool-bar" style="padding:3px">
         <a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="openSaveDialog()">添加新课程</a>
         <a href="#" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="openUpdateDialog()">编辑</a>
-        <span>名称</span>
-        <input id="name" style="line-height:20px;border:1px solid #ccc">
-        <span>状态</span>
-        <select id="status">
-            <option value="">请选择</option>
-            <option value="AC">待选</option>
-            <option value="PS">备选</option>
-            <option value="CM">结束</option>
-        </select>
-        <span>开始</span>
-        <input id="begin" type="date" style="line-height:20px;border:1px solid #ccc">
-        <span>结束</span>
-        <input id="end" type="date" style="line-height:20px;border:1px solid #ccc">
-        <a href="#" class="easyui-linkbutton" plain="true" onclick="doSearch()">查询</a>
+        <form id="search-form" action="/course/export" method="POST">
+            <span>名称</span>
+            <input id="name" name="name" style="line-height:20px;border:1px solid #ccc">
+            <span>状态</span>
+            <select id="status" name="status">
+                <option value="">请选择</option>
+                <option value="AC">待选</option>
+                <option value="PS">备选</option>
+                <option value="CM">结束</option>
+            </select>
+            <span>开始</span>
+            <input id="begin" name="begin" type="date" style="line-height:20px;border:1px solid #ccc">
+            <span>结束</span>
+            <input id="end" name="begin" type="date" style="line-height:20px;border:1px solid #ccc">
+            <a href="#" class="easyui-linkbutton" plain="true" onclick="doSearch()">查询</a>
+            <a href="#" class="easyui-linkbutton" plain="true" onclick="doExport()">导出数据</a>
+        </form>
     </div>
     <table id="course-list"></table>
 </div>
@@ -223,10 +226,10 @@
         $("#update-service-teacher").val(course.serviceTeacher);
         $("#update-service-teacher-tel").val(course.serviceTeacherTel);
         $("#update-classroom").val(course.classroom);
-        $("#update-begin-teach-time").val(course.beginTeachTime.replace(" ","T"));
-        $("#update-end-teach-time").val(course.endTeachTime.replace(" ","T"));
-        $("#update-begin-select-time").val(course.beginSelectTime.replace(" ","T"));
-        $("#update-end-select-time").val(course.endSelectTime.replace(" ","T"));
+        $("#update-begin-teach-time").val(course.beginTeachTime.replace(" ", "T"));
+        $("#update-end-teach-time").val(course.endTeachTime.replace(" ", "T"));
+        $("#update-begin-select-time").val(course.beginSelectTime.replace(" ", "T"));
+        $("#update-end-select-time").val(course.endSelectTime.replace(" ", "T"));
         $("#update-credit").val(course.credit);
         $("#update-max-amount").val(course.maxAmount);
         $("#update-status").val(course.status);
@@ -276,6 +279,27 @@
         }, function (xhr) {
             alert(xhr.responseText);
         });
+    }
+
+    function doExport() {
+        $("#search-form").get(0).submit();
+        /*let qo = {
+            "name": $("#name").val(),
+            "status": $("#status").val(),
+            "begin": $("#begin").val(),
+            "end": $("#end").val()
+        };
+        $.ajax({
+            url: "/course/export",
+            type: "POST",
+            data: JSON.stringify(qo),
+            dataType: "json",
+            contentType: "application/json"
+        }).then(function () {
+
+        }, function (xhr) {
+            alert(xhr.responseText);
+        });*/
     }
 </script>
 </body>

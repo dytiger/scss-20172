@@ -1,13 +1,16 @@
 package org.forten.scss.dto.qo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
 public class CourseQoForTeacher {
     private String name;
     private String status;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date begin;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date end;
 
     private int first;
@@ -15,6 +18,8 @@ public class CourseQoForTeacher {
     private int rows;
 
     public CourseQoForTeacher() {
+        page = 1;
+        rows = 10;
     }
 
     public String getName() {

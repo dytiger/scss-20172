@@ -65,7 +65,7 @@ public class CourseBoTest extends BaseTest {
         Message m = bo.doUpdate(course);
 
         assertEquals("info",m.getTypeDes());
-        assertEquals("课程修改成功！",m.getMsg());
+        assertEquals("课程修改成功！",m.getMessageText());
     }
 
     @Test
@@ -75,11 +75,11 @@ public class CourseBoTest extends BaseTest {
         CourseQoForTeacher qo = new CourseQoForTeacher();
         qo.setBegin(begin);
         qo.setEnd(end);
-        qo.setPageNo(4);
+        qo.setPage(1);
 
         PagedRoForEasyUI<CourseForTeacher> ro = bo.queryBy(qo);
         assertEquals(false,ro.isEmptyData());
-        assertEquals(4,ro.getRows().size());
+        assertEquals(10,ro.getRows().size());
 
         ro.getRows().forEach(System.out::println);
 
@@ -87,5 +87,26 @@ public class CourseBoTest extends BaseTest {
         ro = bo.queryBy(qo);
         assertEquals(true,ro.isEmptyData());
         assertEquals(0,ro.getRows().size());
+    }
+
+    @Test
+    public void testQueryForExport(){
+        Date begin = DateUtil.getCommonTime(2018,1,1);
+        Date end = DateUtil.getCommonTime(2018,12,1);
+        CourseQoForTeacher qo = new CourseQoForTeacher();
+        qo.setName("");
+        qo.setStatus("");
+        qo.setBegin(null);
+        qo.setEnd(null);
+
+        List<CourseForTeacher> list = bo.queryForExport(qo);
+        assertEquals(20,list.size());
+
+        list.forEach(System.out::println);
+
+//        qo.setName("no name");
+//        ro = bo.queryBy(qo);
+//        assertEquals(true,ro.isEmptyData());
+//        assertEquals(0,ro.getRows().size());
     }
 }

@@ -58,8 +58,7 @@ public class CourseBo {
 
     @Transactional(readOnly = true)
     public PagedRoForEasyUI<CourseForTeacher> queryBy(CourseQoForTeacher qo) {
-        SqlSession session = mybatisDao.openSession();
-        CourseDao courseDao = session.getMapper(CourseDao.class);
+        CourseDao courseDao = getCourseDao();
 
         long count = courseDao.queryCountForTeacher(qo);
         if(count==0){
@@ -73,5 +72,17 @@ public class CourseBo {
         List<CourseForTeacher> list = courseDao.queryForTeacher(qo);
 
         return new PagedRoForEasyUI<>(new PagedRo<>(list,page));
+    }
+
+    @Transactional(readOnly = true)
+    public List<CourseForTeacher> queryForExport(CourseQoForTeacher qo) {
+        System.out.println(qo);
+        List<CourseForTeacher> list = getCourseDao().queryForExport(qo);
+        return list;
+    }
+
+    private CourseDao getCourseDao() {
+        SqlSession session = mybatisDao.openSession();
+        return session.getMapper(CourseDao.class);
     }
 }

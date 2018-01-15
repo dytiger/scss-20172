@@ -8,4 +8,5 @@ import java.util.List;
 public interface CourseDao {
     long queryCountForTeacher(CourseQoForTeacher qo);
     List<CourseForTeacher> queryForTeacher(CourseQoForTeacher qo);
+    List<CourseForTeacher> queryForExport(CourseQoForTeacher qo);
 }
