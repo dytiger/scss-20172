@@ -1,9 +1,6 @@
 package org.forten.scss.action;
 
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.forten.dto.Message;
 import org.forten.scss.bo.CourseBo;
@@ -12,16 +9,20 @@ import org.forten.scss.dto.ro.PagedRoForEasyUI;
 import org.forten.scss.dto.vo.CourseForTeacher;
 import org.forten.scss.dto.vo.CourseUpdateForTeacher;
 import org.forten.scss.entity.Course;
+import org.forten.utils.common.DateUtil;
 import org.forten.utils.common.StringUtil;
 import org.forten.utils.system.ValidateException;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.print.attribute.standard.PageRanges;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
+import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -118,10 +119,10 @@ public class CourseAction {
                 dataRow.createCell(3).setCellValue(c.getClassroom());
                 dataRow.createCell(4).setCellValue(c.getServiceTeacher());
                 dataRow.createCell(5).setCellValue(c.getServiceTeacherTel());
-                dataRow.createCell(6).setCellValue(c.getBeginTeachTime());
-                dataRow.createCell(7).setCellValue(c.getEndTeachTime());
-                dataRow.createCell(8).setCellValue(c.getBeginSelectTime());
-                dataRow.createCell(9).setCellValue(c.getEndSelectTime());
+                dataRow.createCell(6).setCellValue(c.getBeginTeachTimeStr());
+                dataRow.createCell(7).setCellValue(c.getEndTeachTimeStr());
+                dataRow.createCell(8).setCellValue(c.getBeginSelectTimeStr());
+                dataRow.createCell(9).setCellValue(c.getEndSelectTimeStr());
                 dataRow.createCell(10).setCellValue(c.getCredit());
                 dataRow.createCell(11).setCellValue(c.getIntro());
                 dataRow.createCell(12).setCellValue(c.getMaxAmount());
@@ -135,5 +136,44 @@ public class CourseAction {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @PostMapping("/course/importData")
+    public void importData(MultipartFile file){
+        List<Course> list = new ArrayList<>();
+        try {
+            InputStream in = file.getInputStream();
+            Workbook wb = WorkbookFactory.create(in);
+            Sheet sheet = wb.getSheetAt(0);
+            for(int i = 1;i<=sheet.getLastRowNum();i++){
+                Row row = sheet.getRow(i);
+
+                String beginTeachTime = row.getCell(5).getStringCellValue();
+                String endTeachTime = row.getCell(6).getStringCellValue();
+                String beginSelectTime = row.getCell(7).getStringCellValue();
+                String endSelectTime = row.getCell(8).getStringCellValue();
+
+                Course c = new Course();
+                c.setName(row.getCell(0).getStringCellValue());
+                c.setTeacher(row.getCell(1).getStringCellValue());
+                c.setClassroom(row.getCell(2).getStringCellValue());
+                c.setServiceTeacher(row.getCell(3).getStringCellValue());
+                c.setServiceTeacherTel(row.getCell(4).getStringCellValue());
+                c.setBeginTeachTime(DateUtil.convertStringToDate(beginTeachTime,"yyyy-MM-dd HH:mm"));
+                c.setEndTeachTime(DateUtil.convertStringToDate(endTeachTime,"yyyy-MM-dd HH:mm"));
+                c.setBeginSelectTime(DateUtil.convertStringToDate(beginSelectTime,"yyyy-MM-dd HH:mm"));
+                c.setEndSelectTime(DateUtil.convertStringToDate(endSelectTime,"yyyy-MM-dd HH:mm"));
+                c.setCredit((int)row.getCell(9).getNumericCellValue());
+                c.setIntro(row.getCell(10).getStringCellValue());
+                c.setMaxAmount((int)row.getCell(11).getNumericCellValue());
+                c.setStatus(row.getCell(12).getStringCellValue());
+
+                list.add(c);
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
+        bo.doBatchSave(list.toArray(new Course[list.size()]));
     }
 }

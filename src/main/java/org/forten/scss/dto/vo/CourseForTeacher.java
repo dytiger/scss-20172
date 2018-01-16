@@ -1,6 +1,7 @@
 package org.forten.scss.dto.vo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import org.forten.utils.common.DateUtil;
 
 import java.util.Date;
 
@@ -152,6 +153,38 @@ public class CourseForTeacher {
         return this.id+"";
     }
 
+    public String getBeginTeachTimeStr(){
+        if(this.beginTeachTime==null){
+            return "";
+        }else{
+            return DateUtil.convertDateToString(beginTeachTime,"yyyy-MM-dd HH:mm");
+        }
+    }
+
+    public String getEndTeachTimeStr(){
+        if(this.endTeachTime==null){
+            return "";
+        }else{
+            return DateUtil.convertDateToString(endTeachTime,"yyyy-MM-dd HH:mm");
+        }
+    }
+
+    public String getBeginSelectTimeStr(){
+        if(this.beginSelectTime==null){
+            return "";
+        }else{
+            return DateUtil.convertDateToString(beginSelectTime,"yyyy-MM-dd HH:mm");
+        }
+    }
+
+    public String getEndSelectTimeStr(){
+        if(this.endSelectTime==null){
+            return "";
+        }else{
+            return DateUtil.convertDateToString(endSelectTime,"yyyy-MM-dd HH:mm");
+        }
+    }
+    
     @Override
     public String toString() {
         return "CourseForTeacher{" +

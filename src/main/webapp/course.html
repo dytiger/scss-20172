@@ -33,6 +33,11 @@
         </form>
     </div>
     <table id="course-list"></table>
+    <form id="upload-form" method="POST" enctype="multipart/form-data">
+        <input type="file" id="file" name="file" />
+        <button type="button" onclick="upload()">导入</button>
+    </form>
+    <progress id="progressBar" value="0" max="100" ></progress><span id="target"></span>
 </div>
 <!-- 保存对话框开始 -->
 <div id="save-dialog" hidden>
@@ -283,23 +288,32 @@
 
     function doExport() {
         $("#search-form").get(0).submit();
-        /*let qo = {
-            "name": $("#name").val(),
-            "status": $("#status").val(),
-            "begin": $("#begin").val(),
-            "end": $("#end").val()
-        };
-        $.ajax({
-            url: "/course/export",
-            type: "POST",
-            data: JSON.stringify(qo),
-            dataType: "json",
-            contentType: "application/json"
-        }).then(function () {
+    }
 
-        }, function (xhr) {
-            alert(xhr.responseText);
-        });*/
+    function upload() {
+        var fileObj = document.getElementById("file").files[0]; // 获取文件对象
+        var FileController = "/course/importData"; // 接收上传文件的后台URL
+        // FormData对象
+        var form = new FormData();
+        form.append("file", fileObj); // 文件对象
+        // XMLHttpRequest对象
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", FileController, true);
+        xhr.onload = function() {
+            alert("上传完成!");
+        };
+        xhr.upload.addEventListener("progress", progress, false);
+        xhr.send(form);
+    }
+    function progress(evt) {
+        var progressBar = document.getElementById("progressBar");
+        var target = document.getElementById("target");
+        if (evt.lengthComputable) {
+            progressBar.max = evt.total;
+            progressBar.value = evt.loaded;
+            target.innerHTML = Math.round(evt.loaded / evt.total * 100)
+                + "%";
+        }
     }
 </script>
 </body>

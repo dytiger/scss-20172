@@ -85,4 +85,9 @@ public class CourseBo {
         SqlSession session = mybatisDao.openSession();
         return session.getMapper(CourseDao.class);
     }
+
+    @Transactional
+    public void doBatchSave(Course... courses){
+        dao.save(courses);
+    }
 }
