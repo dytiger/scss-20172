@@ -14,6 +14,7 @@ import org.forten.scss.dto.vo.CourseUpdateForTeacher;
 import org.forten.scss.entity.Course;
 import org.forten.utils.system.BeanPropertyUtil;
 import org.forten.utils.system.ValidateUtil;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,12 +43,12 @@ public class CourseBo {
     }
 
     @Transactional
-    public Message doUpdate(CourseUpdateForTeacher vo){
+    public Message doUpdate(CourseUpdateForTeacher vo) {
         // TODO 可以使用AOP技术进行以下代码的分离
         ValidateUtil.validateThrow(vo);
         try {
-            Course course = dao.loadById(Course.class,vo.getId());
-            BeanPropertyUtil.copy(course,vo);
+            Course course = dao.loadById(Course.class, vo.getId());
+            BeanPropertyUtil.copy(course, vo);
 
             return Message.info("课程修改成功！");
         } catch (Exception e) {
@@ -57,21 +58,22 @@ public class CourseBo {
     }
 
     @Transactional(readOnly = true)
+    @Cacheable(value = "testCache",key = "'courseBo.queryBy'")
     public PagedRoForEasyUI<CourseForTeacher> queryBy(CourseQoForTeacher qo) {
         CourseDao courseDao = getCourseDao();
 
         long count = courseDao.queryCountForTeacher(qo);
-        if(count==0){
+        if (count == 0) {
             return new PagedRoForEasyUI(new PagedRo<>());
         }
 
-        PageInfo page = PageInfo.getInstance(qo.getPage(),qo.getRows(),(int)count);
+        PageInfo page = PageInfo.getInstance(qo.getPage(), qo.getRows(), (int) count);
 
         qo.setFirst(page.getFirst());
 
         List<CourseForTeacher> list = courseDao.queryForTeacher(qo);
 
-        return new PagedRoForEasyUI<>(new PagedRo<>(list,page));
+        return new PagedRoForEasyUI<>(new PagedRo<>(list, page));
     }
 
     @Transactional(readOnly = true)
@@ -87,7 +89,7 @@ public class CourseBo {
     }
 
     @Transactional
-    public void doBatchSave(Course... courses){
+    public void doBatchSave(Course... courses) {
         dao.save(courses);
     }
 }

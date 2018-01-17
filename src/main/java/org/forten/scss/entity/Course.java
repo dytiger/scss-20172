@@ -2,6 +2,8 @@ package org.forten.scss.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.forten.utils.system.CurrentTimeKeyBuilder;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.Column;
@@ -16,6 +18,7 @@ import java.util.Date;
 
 @Entity
 @Table
+@Cache(region = "testCache",usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Course implements Serializable {
     @Id
     private long id;
