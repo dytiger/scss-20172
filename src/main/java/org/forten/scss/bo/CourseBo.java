@@ -78,7 +78,6 @@ public class CourseBo {
 
     @Transactional(readOnly = true)
     public List<CourseForTeacher> queryForExport(CourseQoForTeacher qo) {
-        System.out.println(qo);
         List<CourseForTeacher> list = getCourseDao().queryForExport(qo);
         return list;
     }
