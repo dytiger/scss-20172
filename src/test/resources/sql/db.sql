@@ -34,6 +34,23 @@ CREATE TABLE cadre
   email VARCHAR(80) NOT NULL COMMENT '邮箱'
 );
 
+CREATE TABLE sc_opt
+(
+	id bigint(19) PRIMARY KEY COMMENT '唯一标识',
+	cadre_id bigint(19) NOT NULL  COMMENT '唯一标识',
+	course_id bigint(19) NOT NULL COMMENT '唯一标识',
+	opt_type char(2) NOT NULL COMMENT '操作类型：选课：XK、退课：TK、排队：PD',
+	opt_time datetime DEFAULT current_timestamp NOT NULL COMMENT '操作时间'
+);
+
+CREATE TABLE sc_info
+(
+	id bigint(19) PRIMARY KEY COMMENT '唯一标识',
+	cadre_id bigint(19) NOT NULL COMMENT '唯一标识',
+	course_id bigint(19) NOT NULL COMMENT '唯一标识',
+	attendance char(2) DEFAULT 'CQ' NOT NULL COMMENT '出勤情况：出勤：CQ、缺勤：QQ'
+);
+
 INSERT INTO cadre VALUES
 (1,'张小偿',md5('1'),'20106221122','女','1333333333','test1@163.com'),
 (2,'刘匀空',md5('1'),'20106221123','男','1333333333','test2@163.com'),
