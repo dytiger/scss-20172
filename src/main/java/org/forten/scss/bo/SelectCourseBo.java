@@ -19,6 +19,16 @@ public class SelectCourseBo {
         return getSelectCourseDao().queryForSelect(cadreId);
     }
 
+    @Transactional(readOnly = true)
+    public List<CourseVoForSelect> queryForCancel(long cadreId){
+        return getSelectCourseDao().queryForCancel(cadreId);
+    }
+
+    @Transactional(readOnly = true)
+    public List<CourseVoForSelect> querySelectedCourse(long cadreId){
+        return getSelectCourseDao().querySelectedCourse(cadreId);
+    }
+
     private SelectCourseDao getSelectCourseDao(){
         return mybatisDao.openSession().getMapper(SelectCourseDao.class);
     }

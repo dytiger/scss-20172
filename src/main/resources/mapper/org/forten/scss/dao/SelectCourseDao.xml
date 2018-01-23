@@ -14,6 +14,7 @@
         <result property="credit" column="credit"/>
     </resultMap>
 
+    <!-- 可进行选课操作的课程 -->
     <select id="queryForSelect" resultMap="courseMapForSelect">
         SELECT
         id,name,teacher,service_teacher,service_teacher_tel,
@@ -26,5 +27,34 @@
           FROM sc_info
           WHERE (opt_type='XK' OR opt_type='PD') AND cadre_id=#{cadreId}
         )
+    </select>
+    <!-- 可进行退课操作的课程 -->
+    <select id="queryForCancel" resultMap="courseMapForSelect">
+        <![CDATA[
+            SELECT
+              id,name,teacher,service_teacher,service_teacher_tel,
+              begin_teach_time,classroom,max_amount,current_amount,credit
+            FROM course
+            WHERE current_timestamp<date_add(end_select_time, interval -1 day)
+            AND id IN (
+              SELECT course_id
+              FROM sc_info
+              WHERE (opt_type='XK' OR opt_type='PD') AND cadre_id=#{cadreId}
+        )]]>
+    </select>
+    <!-- 干部已经选中或正在排队的未上课的所有课程 -->
+    <select id="querySelectedCourse" resultMap="courseMapForSelect">
+        <![CDATA[
+          SELECT
+            id,name,teacher,service_teacher,service_teacher_tel,
+            begin_teach_time,classroom,max_amount,current_amount,credit
+          FROM course
+          WHERE current_timestamp < begin_teach_time
+          AND id IN (
+            SELECT course_id
+            FROM sc_info
+            WHERE (opt_type='XK' OR opt_type='PD') AND cadre_id=#{cadreId}
+          );
+        ]]>
     </select>
 </mapper>

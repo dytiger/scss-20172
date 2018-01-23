@@ -11,10 +11,23 @@
 </head>
 <body>
 <div class="container">
-    <div id="tool-bar" style="padding:3px">
-        <a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="">选课</a>
+    <div class="easyui-tabs">
+        <div title="可选课程">
+            <div id="select-tool-bar" style="padding:3px">
+                <a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="">选课</a>
+            </div>
+            <table id="course-for-select-list"></table>
+        </div>
+        <div title="可退课程">
+            <div id="cancel-tool-bar" style="padding:3px">
+                <a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="">退课</a>
+            </div>
+            <table id="course-for-cancel-list"></table>
+        </div>
+        <div title="已选课程">
+            <table id="selected-list"></table>
+        </div>
     </div>
-    <table id="course-for-select-list"></table>
 </div>
 
 <script src="js/jquery-3.2.1.js"></script>
@@ -27,9 +40,45 @@
         title: "可选课程列表",
         url: '/sc/courseForSelectList',
         method: "GET",
-        toolbar: "#tool-bar",
+        toolbar: "#select-tool-bar",
         columns: [[
             {field: 'idStr', title: 'ID', checkbox: true, resizable: true},
+            {field: 'name', title: '名称', width: 100, resizable: true},
+            {field: 'teacher', title: '讲师', width: 50, resizable: true},
+            {field: 'serviceTeacher', title: '班主任', width: 50, resizable: true},
+            {field: 'serviceTeacherTel', title: '班主任电话', width: 100, resizable: true},
+            {field: 'classroom', title: '教室', width: 50, resizable: true},
+            {field: 'beginTeachTime', title: '开始上课时间', width: 150, resizable: true},
+            {field: 'credit', title: '学分', width: 40, resizable: true},
+            {field: 'maxAmount', title: '课容量', width: 40, resizable: true},
+            {field: 'currentAmount', title: '已选人数', width: 40, resizable: true},
+        ]]
+    });
+
+    $('#course-for-cancel-list').datagrid({
+        title: "可退课程列表",
+        url: '/sc/courseForCancelList',
+        method: "GET",
+        toolbar: "#cancel-tool-bar",
+        columns: [[
+            {field: 'idStr', title: 'ID', checkbox: true, resizable: true},
+            {field: 'name', title: '名称', width: 100, resizable: true},
+            {field: 'teacher', title: '讲师', width: 50, resizable: true},
+            {field: 'serviceTeacher', title: '班主任', width: 50, resizable: true},
+            {field: 'serviceTeacherTel', title: '班主任电话', width: 100, resizable: true},
+            {field: 'classroom', title: '教室', width: 50, resizable: true},
+            {field: 'beginTeachTime', title: '开始上课时间', width: 150, resizable: true},
+            {field: 'credit', title: '学分', width: 40, resizable: true},
+            {field: 'maxAmount', title: '课容量', width: 40, resizable: true},
+            {field: 'currentAmount', title: '已选人数', width: 40, resizable: true},
+        ]]
+    });
+
+    $('#selected-list').datagrid({
+        title: "已选课程列表",
+        url: '/sc/selectedCourse',
+        method: "GET",
+        columns: [[
             {field: 'name', title: '名称', width: 100, resizable: true},
             {field: 'teacher', title: '讲师', width: 50, resizable: true},
             {field: 'serviceTeacher', title: '班主任', width: 50, resizable: true},
