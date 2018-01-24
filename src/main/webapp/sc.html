@@ -14,7 +14,7 @@
     <div class="easyui-tabs">
         <div title="可选课程">
             <div id="select-tool-bar" style="padding:3px">
-                <a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="">选课</a>
+                <a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="selectCourse()">选课</a>
             </div>
             <table id="course-for-select-list"></table>
         </div>
@@ -51,7 +51,7 @@
             {field: 'beginTeachTime', title: '开始上课时间', width: 150, resizable: true},
             {field: 'credit', title: '学分', width: 40, resizable: true},
             {field: 'maxAmount', title: '课容量', width: 40, resizable: true},
-            {field: 'currentAmount', title: '已选人数', width: 40, resizable: true},
+            {field: 'currentAmount', title: '已选人数', width: 40, resizable: true}
         ]]
     });
 
@@ -71,6 +71,7 @@
             {field: 'credit', title: '学分', width: 40, resizable: true},
             {field: 'maxAmount', title: '课容量', width: 40, resizable: true},
             {field: 'currentAmount', title: '已选人数', width: 40, resizable: true},
+            {field: 'optTypeDes', title: '选课状态', width: 40, resizable: true}
         ]]
     });
 
@@ -88,8 +89,38 @@
             {field: 'credit', title: '学分', width: 40, resizable: true},
             {field: 'maxAmount', title: '课容量', width: 40, resizable: true},
             {field: 'currentAmount', title: '已选人数', width: 40, resizable: true},
+            {field: 'optTypeDes', title: '选课状态', width: 40, resizable: true}
         ]]
     });
+
+    function selectCourse(){
+        let course = $('#course-for-select-list').datagrid('getSelected');
+
+        let si = {
+            "courseId":course.idStr
+        };
+
+        if(course.overMax){
+            si.optType="PD";
+        }else{
+            si.optType="XK";
+        }
+
+        $.ajax({
+            url: "/sc/select",
+            type: "POST",
+            data: JSON.stringify(si),
+            dataType: "json",
+            contentType: "application/json"
+        }).then(function (message) {
+            alert(message.messageText);
+            $('#course-for-select-list').datagrid('reload');
+            $('#course-for-cancel-list').datagrid('reload');
+            $('#selected-list').datagrid('reload');
+        }, function (xhr) {
+            alert(xhr.responseText);
+        });
+    }
 
     function doSearch() {
         $('#course-list').datagrid('load', {

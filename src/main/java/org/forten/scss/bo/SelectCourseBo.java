@@ -1,8 +1,10 @@
 package org.forten.scss.bo;
 
 import org.forten.dao.MybatisDao;
+import org.forten.dto.Message;
 import org.forten.scss.dao.SelectCourseDao;
 import org.forten.scss.dto.vo.CourseVoForSelect;
+import org.forten.scss.dto.vo.SelectInfoVoForWrite;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,21 +17,39 @@ public class SelectCourseBo {
     private MybatisDao mybatisDao;
 
     @Transactional(readOnly = true)
-    public List<CourseVoForSelect> queryForSelect(long cadreId){
+    public List<CourseVoForSelect> queryForSelect(long cadreId) {
         return getSelectCourseDao().queryForSelect(cadreId);
     }
 
     @Transactional(readOnly = true)
-    public List<CourseVoForSelect> queryForCancel(long cadreId){
+    public List<CourseVoForSelect> queryForCancel(long cadreId) {
         return getSelectCourseDao().queryForCancel(cadreId);
     }
 
     @Transactional(readOnly = true)
-    public List<CourseVoForSelect> querySelectedCourse(long cadreId){
+    public List<CourseVoForSelect> querySelectedCourse(long cadreId) {
         return getSelectCourseDao().querySelectedCourse(cadreId);
     }
 
-    private SelectCourseDao getSelectCourseDao(){
+    @Transactional
+    public Message doSelectCourse(SelectInfoVoForWrite vo) {
+        try {
+            getSelectCourseDao().selectCourse(vo);
+            if (vo.getOptType().equals("XK")) {
+                getSelectCourseDao().addOneCurrentAmount(vo.getCourseId());
+                return Message.info("选课操作成功!");
+            } else if (vo.getOptType().equals("PD")) {
+                return Message.info("此课程已达到选课人数上限，您目前处理排队状态!");
+            }else{
+                return Message.warn("未知操作！");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Message.error("选课操作失败!");
+        }
+    }
+
+    private SelectCourseDao getSelectCourseDao() {
         return mybatisDao.openSession().getMapper(SelectCourseDao.class);
     }
 }

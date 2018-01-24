@@ -1,7 +1,9 @@
 package org.forten.scss.bo;
 
 import org.forten.BaseTest;
+import org.forten.dto.Message;
 import org.forten.scss.dto.vo.CourseVoForSelect;
+import org.forten.scss.dto.vo.SelectInfoVoForWrite;
 import org.junit.Test;
 
 import javax.annotation.Resource;
@@ -27,5 +29,24 @@ public class SelectCourseBoTest extends BaseTest{
         assertEquals(7,list.size());
 
         list.forEach(System.out::println);
+    }
+
+    @Test
+    public void testQueryForCancel(){
+        List<CourseVoForSelect> list = bo.queryForCancel(1);
+
+        list.forEach(System.out::println);
+    }
+
+    @Test
+    public void testDoSelectCourse(){
+        SelectInfoVoForWrite vo = new SelectInfoVoForWrite(1,20,"XK");
+        Message m = bo.doSelectCourse(vo);
+
+        assertNotNull(m);
+        assertEquals("info",m.getTypeDes());
+
+        vo = new SelectInfoVoForWrite(1,20,"PD");
+        m = bo.doSelectCourse(vo);
     }
 }

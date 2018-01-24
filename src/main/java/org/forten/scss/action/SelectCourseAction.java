@@ -1,8 +1,12 @@
 package org.forten.scss.action;
 
+import org.forten.dto.Message;
 import org.forten.scss.bo.SelectCourseBo;
 import org.forten.scss.dto.vo.CourseVoForSelect;
+import org.forten.scss.dto.vo.SelectInfoVoForWrite;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
@@ -35,5 +39,17 @@ public class SelectCourseAction {
         long cadreId = 1;
 
         return bo.querySelectedCourse(cadreId);
+    }
+
+    @PostMapping("/sc/select")
+    public Message selectCourse(@RequestBody SelectInfoVoForWrite vo){
+        // 此时的vo中暂无cadreId，而已经存在courseId和optType
+        // TODO 干部ID应该从安全上下文中获取
+        long cadreId = 1;
+        
+        // 把cadreId填充到vo对象里
+        vo.setCadreId(cadreId);
+
+        return bo.doSelectCourse(vo);
     }
 }

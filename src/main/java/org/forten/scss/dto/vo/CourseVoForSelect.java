@@ -16,6 +16,7 @@ public class CourseVoForSelect {
     private int maxAmount;
     private int currentAmount;
     private int credit;
+    private String optType;
 
     public CourseVoForSelect() {
     }
@@ -98,6 +99,27 @@ public class CourseVoForSelect {
 
     public void setCredit(int credit) {
         this.credit = credit;
+    }
+
+    public String getOptType() {
+        return optType;
+    }
+
+    public void setOptType(String optType) {
+        this.optType = optType;
+    }
+
+    public String getOptTypeDes(){
+        if(optType==null){
+            return "";
+        }
+        if(optType.equals("XK")){
+            return "选中";
+        }else if(optType.equals("PD")){
+            return "排队";
+        }else{
+            return "未知";
+        }
     }
 
     public String getIdStr(){
