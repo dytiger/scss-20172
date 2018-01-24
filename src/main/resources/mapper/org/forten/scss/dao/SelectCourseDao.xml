@@ -50,6 +50,7 @@
               c.begin_teach_time,c.classroom,c.max_amount,c.current_amount,c.credit,si.opt_type si_opt_type
             FROM course c JOIN sc_info si ON (c.id=si.course_id) JOIN cadre ca ON (ca.id=si.cadre_id)
             WHERE current_timestamp<date_add(c.end_select_time, interval -1 day)
+            AND si.cadre_id=#{cadreId}
             AND c.id IN (
               SELECT course_id
               FROM sc_info
@@ -65,11 +66,22 @@
             c.begin_teach_time,c.classroom,c.max_amount,c.current_amount,c.credit,si.opt_type si_opt_type
           FROM course c JOIN sc_info si ON (c.id=si.course_id) JOIN cadre ca ON (ca.id=si.cadre_id)
           WHERE current_timestamp < begin_teach_time
+          AND si.cadre_id=#{cadreId}
           AND c.id IN (
             SELECT course_id
             FROM sc_info
             WHERE (opt_type='XK' OR opt_type='PD') AND cadre_id=#{cadreId}
           );
+        ]]>
+    </select>
+
+    <select id="queryPD2XK" resultType="Long" parameterType="long" >
+        <![CDATA[
+          SELECT cadre_id
+          FROM sc_info
+          WHERE course_id=#{courseId} AND opt_type='PD'
+          ORDER BY opt_time
+          limit 1
         ]]>
     </select>
 
@@ -82,10 +94,26 @@
         ]]>
     </insert>
 
+    <update id="cancelCourse" parameterType="long">
+        <![CDATA[
+          UPDATE sc_info
+          SET opt_type='TK',opt_time=CURRENT_TIMESTAMP
+          WHERE cadre_id=#{cadreId} AND course_id=#{courseId}
+        ]]>
+    </update>
+
     <update id="addOneCurrentAmount" parameterType="long">
         <![CDATA[
           UPDATE course
           SET current_amount = current_amount + 1
+          WHERE id=#{courseId}
+        ]]>
+    </update>
+
+    <update id="subOneCurrentAmount" parameterType="long">
+        <![CDATA[
+          UPDATE course
+          SET current_amount = current_amount - 1
           WHERE id=#{courseId}
         ]]>
     </update>

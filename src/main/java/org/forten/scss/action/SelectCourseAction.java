@@ -4,10 +4,7 @@ import org.forten.dto.Message;
 import org.forten.scss.bo.SelectCourseBo;
 import org.forten.scss.dto.vo.CourseVoForSelect;
 import org.forten.scss.dto.vo.SelectInfoVoForWrite;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -46,10 +43,18 @@ public class SelectCourseAction {
         // 此时的vo中暂无cadreId，而已经存在courseId和optType
         // TODO 干部ID应该从安全上下文中获取
         long cadreId = 1;
-        
+
         // 把cadreId填充到vo对象里
         vo.setCadreId(cadreId);
 
         return bo.doSelectCourse(vo);
+    }
+
+    @PutMapping("/sc/cancel/{courseId}")
+    public Message cancelCourse(@PathVariable long courseId){
+        // TODO 干部ID应该从安全上下文中获取
+        long cadreId = 1;
+
+        return bo.doCancelCourse(cadreId,courseId);
     }
 }

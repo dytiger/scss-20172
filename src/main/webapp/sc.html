@@ -20,7 +20,7 @@
         </div>
         <div title="可退课程">
             <div id="cancel-tool-bar" style="padding:3px">
-                <a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="">退课</a>
+                <a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="cancelCourse()">退课</a>
             </div>
             <table id="course-for-cancel-list"></table>
         </div>
@@ -122,120 +122,18 @@
         });
     }
 
-    function doSearch() {
-        $('#course-list').datagrid('load', {
-            "name": $("#name").val(),
-            "status": $("#status").val(),
-            "begin": $("#begin").val(),
-            "end": $("#end").val()
-        });
-    }
-
-    function openSaveDialog() {
-        $('#save-dialog').dialog({
-            title: "添加新课程",
-            width: 350,
-            height: 400,
-            closed: false,
-            cache: false,
-            modal: true,
-            buttons: "#save-buttons"
-        });
-        $("#save-dialog").dialog('open');
-    }
-
-    function save() {
-        let course = {
-            "name": $("#save-name").val(),
-            "teacher": $("#save-teacher").val(),
-            "serviceTeacher": $("#save-service-teacher").val(),
-            "serviceTeacherTel": $("#save-service-teacher-tel").val(),
-            "classroom": $("#save-classroom").val(),
-            "beginTeachTime": $("#save-begin-teach-time").val().replace("T", " "),
-            "endTeachTime": $("#save-end-teach-time").val().replace("T", " "),
-            "beginSelectTime": $("#save-begin-select-time").val().replace("T", " "),
-            "endSelectTime": $("#save-end-select-time").val().replace("T", " "),
-            "credit": $("#save-credit").val(),
-            "maxAmount": $("#save-max-amount").val()
-        };
+    function cancelCourse(){
+        let course = $('#course-for-cancel-list').datagrid('getSelected');
 
         $.ajax({
-            url: "/course",
-            type: "POST",
-            data: JSON.stringify(course),
-            dataType: "json",
-            contentType: "application/json"
-        }).then(function (message) {
-            alert(message.messageText);
-            $("#save-form").get(0).reset();
-            $("#course-list").datagrid('reload');
-            $("#save-dialog").dialog('close');
-        }, function (xhr) {
-            alert(xhr.responseText);
-        });
-    }
-
-    function openUpdateDialog() {
-        let course = $("#course-list").datagrid('getSelected');
-
-        console.log(JSON.stringify(course));
-
-        $("#update-id").val(course.idStr);
-        $("#update-name").val(course.name);
-        $("#update-teacher").val(course.teacher);
-        $("#update-service-teacher").val(course.serviceTeacher);
-        $("#update-service-teacher-tel").val(course.serviceTeacherTel);
-        $("#update-classroom").val(course.classroom);
-        $("#update-begin-teach-time").val(course.beginTeachTime.replace(" ", "T"));
-        $("#update-end-teach-time").val(course.endTeachTime.replace(" ", "T"));
-        $("#update-begin-select-time").val(course.beginSelectTime.replace(" ", "T"));
-        $("#update-end-select-time").val(course.endSelectTime.replace(" ", "T"));
-        $("#update-credit").val(course.credit);
-        $("#update-max-amount").val(course.maxAmount);
-        $("#update-status").val(course.status);
-
-        $('#update-dialog').dialog({
-            title: "修改课程信息",
-            width: 350,
-            height: 400,
-            closed: false,
-            cache: false,
-            modal: true,
-            buttons: "#update-buttons"
-        });
-        $("#update-dialog").dialog('open');
-    }
-
-    function update() {
-        let course = {
-            "id": $("#update-id").val(),
-            "name": $("#update-name").val(),
-            "teacher": $("#update-teacher").val(),
-            "serviceTeacher": $("#update-service-teacher").val(),
-            "serviceTeacherTel": $("#update-service-teacher-tel").val(),
-            "classroom": $("#update-classroom").val(),
-            "beginTeachTime": $("#update-begin-teach-time").val().replace("T", " "),
-            "endTeachTime": $("#update-end-teach-time").val().replace("T", " "),
-            "beginSelectTime": $("#update-begin-select-time").val().replace("T", " "),
-            "endSelectTime": $("#update-end-select-time").val().replace("T", " "),
-            "credit": $("#update-credit").val(),
-            "maxAmount": $("#update-max-amount").val(),
-            "status": $("#update-status").val()
-        };
-
-        console.log(JSON.stringify(course));
-
-        $.ajax({
-            url: "/course",
+            url: "/sc/cancel/"+course.idStr,
             type: "PUT",
-            data: JSON.stringify(course),
-            dataType: "json",
             contentType: "application/json"
         }).then(function (message) {
             alert(message.messageText);
-            // 更新成功后，调用数据网格组件的重新加载数据方法
-            $("#course-list").datagrid('reload');
-            $("#update-dialog").dialog('close');
+            $('#course-for-select-list').datagrid('reload');
+            $('#course-for-cancel-list').datagrid('reload');
+            $('#selected-list').datagrid('reload');
         }, function (xhr) {
             alert(xhr.responseText);
         });
