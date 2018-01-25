@@ -53,6 +53,12 @@ CREATE TABLE sc_info
 	primary key id_pk (cadre_id,course_id)
 );
 
+CREATE TABLE sys_params
+(
+	id varchar(50) primary key,
+	value varchar(100) NOT NULL
+);
+
 INSERT INTO cadre VALUES
 (1,'张小偿',md5('1'),'20106221122','女','1333333333','test1@163.com'),
 (2,'刘匀空',md5('1'),'20106221123','男','1333333333','test2@163.com'),
@@ -99,6 +105,12 @@ INSERT INTO sc_info (cadre_id,course_id,opt_type,opt_time) VALUES
 (1,10,'XK','2018-01-23 10:30:22'),
 (2,4,'PD','2018-01-23 10:30:22'),
 (3,4,'PD','2018-01-23 08:30:22');
+
+INSERT INTO sys_params
+('MIN_CREDIT','15'),
+('MAX_CREDIT','25'),
+('COUNT_BEGIN_DATE','2017-09-01'),
+('COUNT_END_DATE','2018-03-01');
 
 commit;
 

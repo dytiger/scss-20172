@@ -164,6 +164,7 @@ public class HibernateDao {
     public <T> List<T> findAll(Class<T> clazz) {
         String hql = "FROM " + clazz.getName();
         Query query = getSession().createQuery(hql);
+        query.setHint( "org.hibernate.cacheable", "true");
         return query.getResultList();
     }
 
