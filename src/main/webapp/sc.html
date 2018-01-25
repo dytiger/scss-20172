@@ -98,7 +98,8 @@
         let course = $('#course-for-select-list').datagrid('getSelected');
 
         let si = {
-            "courseId":course.idStr
+            "courseId":course.idStr,
+            "credit":course.credit
         };
 
         if(course.overMax){
@@ -118,6 +119,7 @@
             $('#course-for-select-list').datagrid('reload');
             $('#course-for-cancel-list').datagrid('reload');
             $('#selected-list').datagrid('reload');
+            showCredit();
         }, function (xhr) {
             alert(xhr.responseText);
         });
@@ -135,6 +137,7 @@
             $('#course-for-select-list').datagrid('reload');
             $('#course-for-cancel-list').datagrid('reload');
             $('#selected-list').datagrid('reload');
+            showCredit();
         }, function (xhr) {
             alert(xhr.responseText);
         });

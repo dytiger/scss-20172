@@ -1,13 +1,11 @@
 package org.forten.scss.bo;
 
-import com.microsoft.schemas.office.office.STInsetMode;
 import org.forten.dao.HibernateDao;
 import org.forten.dao.MybatisDao;
 import org.forten.dto.Message;
 import org.forten.scss.dao.SelectCourseDao;
 import org.forten.scss.dto.qo.CreditQoForCount;
 import org.forten.scss.dto.vo.CourseVoForSelect;
-import org.forten.scss.dto.vo.CreditVo;
 import org.forten.scss.dto.vo.SelectInfoVoForWrite;
 import org.forten.scss.entity.SysParams;
 import org.springframework.stereotype.Service;
@@ -41,6 +39,11 @@ public class SelectCourseBo {
 
     @Transactional
     public Message doSelectCourse(SelectInfoVoForWrite vo) {
+        long cadreId = vo.getCadreId();
+        int maxCredit = dao.loadById(SysParams.class, "MAX_CREDIT").getIntValue();
+        if(getCurrentCredit(cadreId)+getNotBeginCredit(cadreId)+vo.getCredit()>maxCredit){
+            return Message.warn("因已经超过学分上限，您暂时不可以选择此课程。");
+        }
         try {
             getSelectCourseDao().selectCourse(vo);
             if (vo.getOptType().equals("XK")) {
@@ -67,7 +70,10 @@ public class SelectCourseBo {
             if (toXKCadreId == null) {
                 selectCourseDao.subOneCurrentAmount(courseId);
             } else {
-                SelectInfoVoForWrite vo = new SelectInfoVoForWrite(toXKCadreId, courseId, "XK");
+                SelectInfoVoForWrite vo = new SelectInfoVoForWrite();
+                vo.setCadreId(toXKCadreId);
+                vo.setCourseId(courseId);
+                vo.setOptType("XK");
                 selectCourseDao.selectCourse(vo);
             }
             return Message.info("退课操作成功!");
@@ -83,6 +89,24 @@ public class SelectCourseBo {
         int maxCredit = dao.loadById(SysParams.class, "MAX_CREDIT").getIntValue();
         String beginDate = dao.loadById(SysParams.class, "COUNT_BEGIN_DATE").getValue();
         String endDate = dao.loadById(SysParams.class, "COUNT_END_DATE").getValue();
+
+        int c = getCurrentCredit(cadreId);
+        int nc = getNotBeginCredit(cadreId);
+
+        String msg = "目前您已经学习课程的学分总数为：" + c + "分，未学习课程学分为："+nc+"分<br>在" + beginDate + "至" + endDate + "时间段内，您应该修习的学分为" + minCredit + "~" + maxCredit + "分";
+        return Message.info(msg);
+    }
+
+    private int getNotBeginCredit(long cadreId){
+        Integer c = getSelectCourseDao().queryCreditForNotBegin(cadreId);
+        if (c == null) {
+            c = 0;
+        }
+
+        return c;
+    }
+
+    private int getCurrentCredit(long cadreId){
         Date begin = dao.loadById(SysParams.class, "COUNT_BEGIN_DATE").getTimeValue();
         Date end = dao.loadById(SysParams.class, "COUNT_END_DATE").getTimeValue();
 
@@ -96,8 +120,7 @@ public class SelectCourseBo {
             c = 0;
         }
 
-        String msg = "目前已经学习课程的学分总数为：" + c + "<br>在" + beginDate + "至" + endDate + "时间段内，您应该修习的学分为[" + minCredit + "~" + maxCredit + "]";
-        return Message.info(msg);
+        return c;
     }
 
     private SelectCourseDao getSelectCourseDao() {

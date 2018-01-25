@@ -25,4 +25,6 @@ public interface SelectCourseDao {
     Long queryPD2XK(@Param("courseId") long courseId);
 
     Integer queryCreditForCount(CreditQoForCount qo);
+
+    Integer queryCreditForNotBegin(long cadreId);
 }
