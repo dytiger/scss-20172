@@ -6,7 +6,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class SysParamsBo {
@@ -14,7 +17,44 @@ public class SysParamsBo {
     private HibernateDao dao;
 
     @Transactional(readOnly = true)
-    public List<SysParams> queryAll(){
-        return dao.findAll(SysParams.class);
+    public List<SysParams> queryAll() {
+        List<SysParams> list = dao.findAll(SysParams.class);
+        return list;
+    }
+
+    @Transactional(readOnly = true)
+    public String getValue(String key) {
+        SysParams sp = dao.loadById(SysParams.class, key);
+        return sp.getValue();
+    }
+
+    @Transactional(readOnly = true)
+    public int getIntValue(String key) {
+        SysParams sp = dao.loadById(SysParams.class, key);
+        return sp.getIntValue();
+    }
+
+    @Transactional(readOnly = true)
+    public boolean getBooleanValue(String key) {
+        SysParams sp = dao.loadById(SysParams.class, key);
+        return sp.getBooleanValue();
+    }
+
+    @Transactional(readOnly = true)
+    public Date getDateValue(String key) {
+        SysParams sp = dao.loadById(SysParams.class, key);
+        return sp.getDateValue();
+    }
+
+    @Transactional(readOnly = true)
+    public Date getDateValue(String key, String pattern) {
+        SysParams sp = dao.loadById(SysParams.class, key);
+        return sp.getDateValue(pattern);
+    }
+
+    @Transactional(readOnly = true)
+    public Date getTimeValue(String key) {
+        SysParams sp = dao.loadById(SysParams.class, key);
+        return sp.getTimeValue();
     }
 }

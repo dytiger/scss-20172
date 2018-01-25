@@ -2,7 +2,9 @@ package org.forten.scss.bo;
 
 import org.forten.BaseTest;
 import org.forten.dto.Message;
+import org.forten.scss.dto.qo.CreditQoForCount;
 import org.forten.scss.dto.vo.CourseVoForSelect;
+import org.forten.scss.dto.vo.CreditVo;
 import org.forten.scss.dto.vo.SelectInfoVoForWrite;
 import org.junit.Test;
 
@@ -36,6 +38,13 @@ public class SelectCourseBoTest extends BaseTest{
         List<CourseVoForSelect> list = bo.queryForCancel(1);
 
         list.forEach(System.out::println);
+    }
+
+    @Test
+    public void testQueryCreditForCount(){
+        Message m = bo.queryCreditForCount(1);
+        assertNotNull(m);
+        System.out.println(m.getMessageText());
     }
 
     @Test

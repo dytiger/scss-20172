@@ -117,4 +117,21 @@
           WHERE id=#{courseId}
         ]]>
     </update>
+
+    <select id="queryCreditForCount" resultType="Integer" parameterType="org.forten.scss.dto.qo.CreditQoForCount">
+        <![CDATA[
+            SELECT sum(cs.credit)
+            FROM
+                cadre c JOIN sc_info si
+                ON (c.id=si.cadre_id)
+                JOIN course cs
+                ON (cs.id=si.course_id)
+            WHERE
+                c.id=#{cadreId}
+                AND current_timestamp>cs.end_teach_time
+                AND cs.begin_teach_time BETWEEN #{begin} AND #{end}
+                AND si.attendance='CQ'
+                AND si.opt_type='XK'
+        ]]>
+    </select>
 </mapper>

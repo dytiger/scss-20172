@@ -36,7 +36,7 @@ public class SysParams implements Serializable {
 
     public int getIntValue(){
         if(StringUtil.hasText(value)){
-            return NumberUtil.parseNumber(value,int.class);
+            return NumberUtil.parseNumber(value,Integer.class);
         }else{
             return 0;
         }

@@ -11,6 +11,7 @@
 </head>
 <body>
 <div class="container">
+    <div id="credit-info"></div>
     <div class="easyui-tabs">
         <div title="可选课程">
             <div id="select-tool-bar" style="padding:3px">
@@ -138,6 +139,22 @@
             alert(xhr.responseText);
         });
     }
+
+    function showCredit() {
+        $.ajax({
+            url: "/sc/credit",
+            type: "GET",
+            contentType: "application/json"
+        }).then(function (message) {
+            $("#credit-info").html(message.messageText);
+        }, function (xhr) {
+            alert(xhr.responseText);
+        });
+    }
+
+    $(function () {
+        showCredit();
+    });
 </script>
 </body>
 </html>

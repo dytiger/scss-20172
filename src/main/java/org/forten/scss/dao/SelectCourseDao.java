@@ -1,6 +1,7 @@
 package org.forten.scss.dao;
 
 import org.apache.ibatis.annotations.Param;
+import org.forten.scss.dto.qo.CreditQoForCount;
 import org.forten.scss.dto.vo.CourseVoForSelect;
 import org.forten.scss.dto.vo.SelectInfoVoForWrite;
 
@@ -22,4 +23,6 @@ public interface SelectCourseDao {
     void subOneCurrentAmount(@Param("courseId") long courseId);
 
     Long queryPD2XK(@Param("courseId") long courseId);
+
+    Integer queryCreditForCount(CreditQoForCount qo);
 }
