@@ -106,7 +106,7 @@ INSERT INTO sc_info (cadre_id,course_id,opt_type,opt_time) VALUES
 (2,4,'PD','2018-01-23 10:30:22'),
 (3,4,'PD','2018-01-23 08:30:22');
 
-INSERT INTO sys_params
+INSERT INTO sys_params VALUES
 ('MIN_CREDIT','15'),
 ('MAX_CREDIT','25'),
 ('COUNT_BEGIN_DATE','2017-09-01'),
