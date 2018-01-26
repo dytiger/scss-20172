@@ -8,6 +8,8 @@ import org.forten.scss.dto.qo.CourseQoForTeacher;
 import org.forten.scss.dto.ro.PagedRoForEasyUI;
 import org.forten.scss.dto.vo.CourseForTeacher;
 import org.forten.scss.dto.vo.CourseUpdateForTeacher;
+import org.forten.scss.dto.vo.CourseVoForNameList;
+import org.forten.scss.dto.vo.NameListVo;
 import org.forten.scss.entity.Course;
 import org.forten.utils.common.DateUtil;
 import org.forten.utils.common.StringUtil;
@@ -70,7 +72,7 @@ public class CourseAction {
     }
 
     @PostMapping("/course/export")
-    public void exportData(CourseQoForTeacher qo, HttpServletResponse response){
+    public void exportData(CourseQoForTeacher qo, HttpServletResponse response) {
         List<CourseForTeacher> list = bo.queryForExport(qo);
         try (Workbook wb = new XSSFWorkbook()) {
             Sheet sheet = wb.createSheet("课程信息");
@@ -138,14 +140,44 @@ public class CourseAction {
         }
     }
 
+    @PostMapping("/course/exportNameList")
+    public void exportNameList(CourseVoForNameList vo,HttpServletResponse response) {
+        List<NameListVo> list = bo.queryNameList(vo.getId());
+        try (Workbook wb = new XSSFWorkbook()) {
+            Sheet sheet = wb.createSheet("学员名单");
+
+            sheet.createRow(0).createCell(0).setCellValue(vo.getName());
+            Row second = sheet.createRow(1);
+            second.createCell(0).setCellValue("讲师：" + vo.getTeacher());
+            second.createCell(1).setCellValue("上课时间" + vo.getBeginTeachTime());
+            second.createCell(2).setCellValue("学分" + vo.getCredit());
+
+            for (int i = 0; i < list.size(); i++) {
+                NameListVo nameVo = list.get(i);
+                Row dataRow = sheet.createRow(i + 2);
+                dataRow.createCell(0).setCellValue(nameVo.getEmpCard());
+                dataRow.createCell(1).setCellValue(nameVo.getName());
+                dataRow.createCell(2).setCellValue(nameVo.getTel());
+            }
+
+            response.setCharacterEncoding("UTF-8");
+            response.setHeader("Content-Disposition", "attachment; filename=name-list.xlsx");
+            ServletOutputStream out = response.getOutputStream();
+            wb.write(out);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
     @PostMapping("/course/importData")
-    public void importData(MultipartFile file){
+    public void importData(MultipartFile file) {
         List<Course> list = new ArrayList<>();
         try {
             InputStream in = file.getInputStream();
             Workbook wb = WorkbookFactory.create(in);
             Sheet sheet = wb.getSheetAt(0);
-            for(int i = 1;i<=sheet.getLastRowNum();i++){
+            for (int i = 1; i <= sheet.getLastRowNum(); i++) {
                 Row row = sheet.getRow(i);
 
                 String beginTeachTime = row.getCell(5).getStringCellValue();
@@ -159,18 +191,18 @@ public class CourseAction {
                 c.setClassroom(row.getCell(2).getStringCellValue());
                 c.setServiceTeacher(row.getCell(3).getStringCellValue());
                 c.setServiceTeacherTel(row.getCell(4).getStringCellValue());
-                c.setBeginTeachTime(DateUtil.convertStringToDate(beginTeachTime,"yyyy-MM-dd HH:mm"));
-                c.setEndTeachTime(DateUtil.convertStringToDate(endTeachTime,"yyyy-MM-dd HH:mm"));
-                c.setBeginSelectTime(DateUtil.convertStringToDate(beginSelectTime,"yyyy-MM-dd HH:mm"));
-                c.setEndSelectTime(DateUtil.convertStringToDate(endSelectTime,"yyyy-MM-dd HH:mm"));
-                c.setCredit((int)row.getCell(9).getNumericCellValue());
+                c.setBeginTeachTime(DateUtil.convertStringToDate(beginTeachTime, "yyyy-MM-dd HH:mm"));
+                c.setEndTeachTime(DateUtil.convertStringToDate(endTeachTime, "yyyy-MM-dd HH:mm"));
+                c.setBeginSelectTime(DateUtil.convertStringToDate(beginSelectTime, "yyyy-MM-dd HH:mm"));
+                c.setEndSelectTime(DateUtil.convertStringToDate(endSelectTime, "yyyy-MM-dd HH:mm"));
+                c.setCredit((int) row.getCell(9).getNumericCellValue());
                 c.setIntro(row.getCell(10).getStringCellValue());
-                c.setMaxAmount((int)row.getCell(11).getNumericCellValue());
+                c.setMaxAmount((int) row.getCell(11).getNumericCellValue());
                 c.setStatus(row.getCell(12).getStringCellValue());
 
                 list.add(c);
             }
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 

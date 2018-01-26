@@ -82,14 +82,14 @@
         <property name="sqlSessionFactory" ref="sqlSessionFactory" />
     </bean>
 
-    <cache:annotation-driven cache-manager="cacheManager" />
+    <!--<cache:annotation-driven cache-manager="cacheManager" />
     <bean id="ehCacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
         <property name="configLocation" value="classpath:ehcache.xml" />
         <property name="shared" value="true" />
     </bean>
     <bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager">
         <property name="cacheManager" ref="ehCacheManager" />
-    </bean>
+    </bean>-->
 
     <!-- 通知Spring容器，我们使用annotation方式进行事务管理 -->
     <tx:annotation-driven/>

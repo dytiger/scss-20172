@@ -30,6 +30,7 @@
             <input id="end" name="begin" type="date" style="line-height:20px;border:1px solid #ccc">
             <a href="#" class="easyui-linkbutton" plain="true" onclick="doSearch()">查询</a>
             <a href="#" class="easyui-linkbutton" plain="true" onclick="doExport()">导出数据</a>
+            <a href="#" class="easyui-linkbutton" plain="true" onclick="doExportNameList()">导出学员名单</a>
         </form>
     </div>
     <table id="course-list"></table>
@@ -135,6 +136,13 @@
     <a href="#" class="easyui-linkbutton" iconCls="icon-cancel" onclick="$('#update-dialog').dialog('close')">取消</a>
 </div>
 <!-- 数据修改对话框结束 -->
+<form id="name-list-form" action="/course/exportNameList" method="POST">
+    <input type="hidden" id="nl-name" name="name" />
+    <input type="hidden" id="nl-id" name="id" />
+    <input type="hidden" id="nl-teacher" name="teacher" />
+    <input type="hidden" id="nl-begin-teach-time" name="beginTeachTime" />
+    <input type="hidden" id="nl-credit" name="credit" />
+</form>
 
 <script src="js/jquery-3.2.1.js"></script>
 <script src="js/bootstrap.js"></script>
@@ -288,6 +296,18 @@
 
     function doExport() {
         $("#search-form").get(0).submit();
+    }
+
+    function doExportNameList() {
+        let course = $("#course-list").datagrid('getSelected');
+
+        $("#nl-id").val(course.id);
+        $("#nl-name").val(course.name);
+        $("#nl-begin-teach-time").val(course.beginTeachTime);
+        $("#nl-teacher").val(course.teacher);
+        $("#nl-credit").val(course.credit);
+
+        $("#name-list-form").get(0).submit();
     }
 
     function upload() {

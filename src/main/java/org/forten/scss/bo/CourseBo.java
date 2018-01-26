@@ -11,6 +11,7 @@ import org.forten.scss.dto.qo.CourseQoForTeacher;
 import org.forten.scss.dto.ro.PagedRoForEasyUI;
 import org.forten.scss.dto.vo.CourseForTeacher;
 import org.forten.scss.dto.vo.CourseUpdateForTeacher;
+import org.forten.scss.dto.vo.NameListVo;
 import org.forten.scss.entity.Course;
 import org.forten.utils.system.BeanPropertyUtil;
 import org.forten.utils.system.ValidateUtil;
@@ -82,13 +83,19 @@ public class CourseBo {
         return list;
     }
 
+    @Transactional
+    public void doBatchSave(Course... courses) {
+        dao.save(courses);
+    }
+
+    @Transactional(readOnly = true)
+    public List<NameListVo> queryNameList(long courseId){
+        return getCourseDao().queryNameList(courseId);
+    }
+
     private CourseDao getCourseDao() {
         SqlSession session = mybatisDao.openSession();
         return session.getMapper(CourseDao.class);
     }
 
-    @Transactional
-    public void doBatchSave(Course... courses) {
-        dao.save(courses);
-    }
 }

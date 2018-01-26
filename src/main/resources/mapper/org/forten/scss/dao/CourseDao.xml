@@ -19,7 +19,13 @@
         <result property="status" column="status"/>
     </resultMap>
 
-    <select id="queryCountForTeacher" resultType="long" useCache="true">
+    <resultMap type="org.forten.scss.dto.vo.NameListVo" id="nameListMap">
+        <result property="name" column="cadreName"/>
+        <result property="empCard" column="cadreEmpCard"/>
+        <result property="tel" column="cadreTel"/>
+    </resultMap>
+
+    <select id="queryCountForTeacher" resultType="long">
         SELECT
         count(id)
         FROM course
@@ -37,7 +43,7 @@
         </where>
     </select>
 
-    <select id="queryForTeacher" resultMap="courseMapForTeacher" useCache="true">
+    <select id="queryForTeacher" resultMap="courseMapForTeacher">
         SELECT
         *
         FROM course
@@ -75,11 +81,20 @@
         </where>
         ORDER BY id
     </select>
-    <!--<cache type="org.mybatis.caches.ehcache.EhcacheCache" >
-        <property name="timeToIdleSeconds" value="3600"/>
-        <property name="timeToLiveSeconds" value="3600"/>
-        <property name="maxEntriesLocalHeap" value="1000"/>
-        <property name="maxEntriesLocalDisk" value="10000000"/>
-        <property name="memoryStoreEvictionPolicy" value="LRU"/>
-    </cache>-->
+
+    <select id="queryNameList" resultMap="nameListMap" parameterType="long">
+        <![CDATA[
+          SELECT c.emp_card cadreEmpCard,c.name cadreName,c.tel cadreTel
+          FROM
+              cadre c JOIN sc_info si
+              ON (c.id=si.cadre_id)
+              JOIN course cs
+              ON (cs.id=si.course_id)
+          WHERE
+              cs.id=#{courseId}
+              AND si.opt_type='XK'
+        ]]>
+    </select>
+
+
 </mapper>

@@ -2,9 +2,7 @@ package org.forten.scss.bo;
 
 import org.forten.BaseTest;
 import org.forten.dto.Message;
-import org.forten.scss.dto.qo.CreditQoForCount;
 import org.forten.scss.dto.vo.CourseVoForSelect;
-import org.forten.scss.dto.vo.CreditVo;
 import org.forten.scss.dto.vo.SelectInfoVoForWrite;
 import org.junit.Test;
 
@@ -49,13 +47,13 @@ public class SelectCourseBoTest extends BaseTest{
 
     @Test
     public void testDoSelectCourse(){
-        SelectInfoVoForWrite vo = new SelectInfoVoForWrite(1,20,"XK");
+        SelectInfoVoForWrite vo = new SelectInfoVoForWrite(1,20,"XK",3);
         Message m = bo.doSelectCourse(vo);
 
         assertNotNull(m);
         assertEquals("info",m.getTypeDes());
 
-        vo = new SelectInfoVoForWrite(1,20,"PD");
+        vo = new SelectInfoVoForWrite(1,20,"PD",3);
         m = bo.doSelectCourse(vo);
     }
 }
