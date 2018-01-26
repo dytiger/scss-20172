@@ -25,6 +25,15 @@
         <result property="tel" column="cadreTel"/>
     </resultMap>
 
+    <resultMap type="org.forten.scss.dto.vo.AttendanceVo" id="attendanceMap">
+        <result property="courseId" column="courseId"/>
+        <result property="cadreId" column="cadreId"/>
+        <result property="cadreName" column="cadreName"/>
+        <result property="empCard" column="empCard"/>
+        <result property="tel" column="tel"/>
+        <result property="attendance" column="attendance"/>
+    </resultMap>
+
     <select id="queryCountForTeacher" resultType="long">
         SELECT
         count(id)
@@ -82,6 +91,14 @@
         ORDER BY id
     </select>
 
+    <select id="queryFinished" resultMap="courseMapForTeacher">
+        SELECT *
+        FROM course
+        WHERE end_teach_time BETWEEN
+          (SELECT value FROM sys_params WHERE id='COUNT_BEGIN_DATE') AND current_timestamp
+        ORDER BY end_teach_time DESC
+    </select>
+
     <select id="queryNameList" resultMap="nameListMap" parameterType="long">
         <![CDATA[
           SELECT c.emp_card cadreEmpCard,c.name cadreName,c.tel cadreTel
@@ -93,6 +110,16 @@
           WHERE
               cs.id=#{courseId}
               AND si.opt_type='XK'
+        ]]>
+    </select>
+
+    <select id="queryForAttendance" resultMap="attendanceMap" parameterType="long">
+        <![CDATA[
+          SELECT si.cadre_id cadreId,si.course_id courseId,ca.name cadreName,
+            ca.emp_card empCard,ca.tel tel,si.attendance attendance
+          FROM course c JOIN sc_info si ON (c.id=si.course_id)
+            JOIN cadre ca ON (ca.id=si.cadre_id)
+          WHERE si.course_id=#{courseId} AND si.opt_type="XK"
         ]]>
     </select>
 

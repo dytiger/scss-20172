@@ -9,12 +9,14 @@ import org.forten.dto.PagedRo;
 import org.forten.scss.dao.CourseDao;
 import org.forten.scss.dto.qo.CourseQoForTeacher;
 import org.forten.scss.dto.ro.PagedRoForEasyUI;
+import org.forten.scss.dto.vo.AttendanceVo;
 import org.forten.scss.dto.vo.CourseForTeacher;
 import org.forten.scss.dto.vo.CourseUpdateForTeacher;
 import org.forten.scss.dto.vo.NameListVo;
 import org.forten.scss.entity.Course;
 import org.forten.utils.system.BeanPropertyUtil;
 import org.forten.utils.system.ValidateUtil;
+import org.hibernate.annotations.ManyToAny;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -91,6 +93,16 @@ public class CourseBo {
     @Transactional(readOnly = true)
     public List<NameListVo> queryNameList(long courseId){
         return getCourseDao().queryNameList(courseId);
+    }
+
+    @Transactional(readOnly = true)
+    public List<CourseForTeacher> queryFinised(){
+        return getCourseDao().queryFinished();
+    }
+
+    @Transactional(readOnly = true)
+    public List<AttendanceVo> queryForAttendance(long coruseId){
+        return getCourseDao().queryForAttendance(coruseId);
     }
 
     private CourseDao getCourseDao() {

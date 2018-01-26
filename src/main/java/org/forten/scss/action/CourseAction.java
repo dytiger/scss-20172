@@ -6,10 +6,7 @@ import org.forten.dto.Message;
 import org.forten.scss.bo.CourseBo;
 import org.forten.scss.dto.qo.CourseQoForTeacher;
 import org.forten.scss.dto.ro.PagedRoForEasyUI;
-import org.forten.scss.dto.vo.CourseForTeacher;
-import org.forten.scss.dto.vo.CourseUpdateForTeacher;
-import org.forten.scss.dto.vo.CourseVoForNameList;
-import org.forten.scss.dto.vo.NameListVo;
+import org.forten.scss.dto.vo.*;
 import org.forten.scss.entity.Course;
 import org.forten.utils.common.DateUtil;
 import org.forten.utils.common.StringUtil;
@@ -34,8 +31,7 @@ public class CourseAction {
     private CourseBo bo;
 
     @PostMapping("/course")
-    public @ResponseBody
-    Message save(@RequestBody Course course) {
+    public Message save(@RequestBody Course course) {
         try {
             return bo.doSave(course);
         } catch (ValidateException e) {
@@ -44,8 +40,7 @@ public class CourseAction {
     }
 
     @PutMapping("/course")
-    public @ResponseBody
-    Message update(@RequestBody CourseUpdateForTeacher vo) {
+    public Message update(@RequestBody CourseUpdateForTeacher vo) {
         try {
             return bo.doUpdate(vo);
         } catch (ValidateException e) {
@@ -53,13 +48,22 @@ public class CourseAction {
         }
     }
 
+    @GetMapping("/course/finished")
+    public List<CourseForTeacher> getFinished() {
+        return bo.queryFinised();
+    }
+
+    @GetMapping("/course/attendance/{courseId}")
+    public List<AttendanceVo> getScInfoForAttendance(@PathVariable long courseId) {
+        return bo.queryForAttendance(courseId);
+    }
+
     @PostMapping("/course/query")
-    public @ResponseBody
-    PagedRoForEasyUI<CourseForTeacher> listPage(@RequestParam(defaultValue = "") String name, @RequestParam(defaultValue = "") String status,
-                                                @RequestParam(defaultValue = "") @DateTimeFormat(pattern = "yyyy-MM-dd") Date begin,
-                                                @RequestParam(defaultValue = "") @DateTimeFormat(pattern = "yyyy-MM-dd") Date end,
-                                                @RequestParam(defaultValue = "1") int page,
-                                                @RequestParam(defaultValue = "10") int rows) {
+    public PagedRoForEasyUI<CourseForTeacher> listPage(@RequestParam(defaultValue = "") String name, @RequestParam(defaultValue = "") String status,
+                                                       @RequestParam(defaultValue = "") @DateTimeFormat(pattern = "yyyy-MM-dd") Date begin,
+                                                       @RequestParam(defaultValue = "") @DateTimeFormat(pattern = "yyyy-MM-dd") Date end,
+                                                       @RequestParam(defaultValue = "1") int page,
+                                                       @RequestParam(defaultValue = "10") int rows) {
         CourseQoForTeacher qo = new CourseQoForTeacher();
         qo.setName(name);
         qo.setEnd(end);
@@ -141,7 +145,7 @@ public class CourseAction {
     }
 
     @PostMapping("/course/exportNameList")
-    public void exportNameList(CourseVoForNameList vo,HttpServletResponse response) {
+    public void exportNameList(CourseVoForNameList vo, HttpServletResponse response) {
         List<NameListVo> list = bo.queryNameList(vo.getId());
         try (Workbook wb = new XSSFWorkbook()) {
             Sheet sheet = wb.createSheet("学员名单");

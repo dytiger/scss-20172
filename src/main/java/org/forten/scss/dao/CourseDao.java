@@ -1,6 +1,7 @@
 package org.forten.scss.dao;
 
 import org.forten.scss.dto.qo.CourseQoForTeacher;
+import org.forten.scss.dto.vo.AttendanceVo;
 import org.forten.scss.dto.vo.CourseForTeacher;
 import org.forten.scss.dto.vo.NameListVo;
 
@@ -11,7 +12,11 @@ public interface CourseDao {
 
     List<CourseForTeacher> queryForTeacher(CourseQoForTeacher qo);
 
+    List<CourseForTeacher> queryFinished();
+
     List<CourseForTeacher> queryForExport(CourseQoForTeacher qo);
 
     List<NameListVo> queryNameList(long courseId);
+
+    List<AttendanceVo> queryForAttendance(long courseId);
 }
