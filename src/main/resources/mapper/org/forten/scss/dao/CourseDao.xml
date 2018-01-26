@@ -123,5 +123,10 @@
         ]]>
     </select>
 
-
+    <update id="changeAttendance" parameterType="org.forten.scss.dto.vo.AttendanceVo">
+        <![CDATA[
+          UPDATE sc_info SET attendance=#{attendance}
+          WHERE course_id=#{courseId} AND cadre_id=#{cadreId}
+        ]]>
+    </update>
 </mapper>

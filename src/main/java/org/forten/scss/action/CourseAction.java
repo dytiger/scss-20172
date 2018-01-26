@@ -212,4 +212,14 @@ public class CourseAction {
 
         bo.doBatchSave(list.toArray(new Course[list.size()]));
     }
+
+    @PutMapping("/course/attendance")
+    public Message changeAttendance(@RequestBody AttendanceVo vo){
+        try{
+            bo.doChangeAttendance(vo);
+            return Message.info("考勤维护成功！");
+        }catch(Exception e){
+            return Message.error("考勤维护失败！");
+        }
+    }
 }

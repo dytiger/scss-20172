@@ -105,9 +105,13 @@ public class CourseBo {
         return getCourseDao().queryForAttendance(coruseId);
     }
 
+    @Transactional
+    public void doChangeAttendance(AttendanceVo vo){
+        getCourseDao().changeAttendance(vo);
+    }
+
     private CourseDao getCourseDao() {
         SqlSession session = mybatisDao.openSession();
         return session.getMapper(CourseDao.class);
     }
-
 }

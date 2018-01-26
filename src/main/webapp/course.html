@@ -377,31 +377,53 @@
         let course = $("#finished-list").datagrid("getSelected");
         let table = "";
         $.ajax({
-            url: "/course/attendance/"+course.idStr,
+            url: "/course/attendance/" + course.idStr,
             type: "GET",
             contentType: "application/json"
         }).then(function (vos) {
-            table="<table class='table'><tr><th>工作证</th><th>姓名</th><th>电话</th><th>出勤情况</th></tr>";
-            $.each(vos,function (i,vo) {
-                table = table+"<tr><td>" +vo.empCard+
-                    "</td><td>" +vo.cadreName+
-                    "</td><td>" +vo.tel+
+            table = "<table class='table'><tr><th>工作证</th><th>姓名</th><th>电话</th><th>出勤情况</th></tr>";
+            $.each(vos, function (i, vo) {
+                table = table + "<tbody><tr><td>" + vo.empCard +
+                    "</td><td>" + vo.cadreName +
+                    "</td><td>" + vo.tel +
                     "</td><td>" +
-                    "<input type='radio' class='cq-radio' data-cadreId='"+vo.cadreId+"' data-courseId='"+vo.courseId+"' "+((vo.attendance=='CQ')?'checked':'')+" /> 出勤" +
-                    "<input type='radio' class='qq-radio' data-cadreId='"+vo.cadreId+"' data-courseId='"+vo.courseId+"' "+((vo.attendance=='QQ')?'checked':'')+" /> 缺勤" +
-                    "</td></tr>";
+                    "<input name='cq' type='radio' value='CQ' class='cq-radio' data-cadre-id='" + vo.cadreId + "' data-course-id='" + vo.courseId + "' " + ((vo.attendance == 'CQ') ? 'checked' : '') + " /> 出勤" +
+                    "<input name='cq' type='radio' value='QQ' class='cq-radio' data-cadre-id='" + vo.cadreId + "' data-course-id='" + vo.courseId + "' " + ((vo.attendance == 'QQ') ? 'checked' : '') + " /> 缺勤" +
+                    "</td></tr></tbody>";
             });
             table = table + "</table>";
-            $("#tabs").tabs("add",{
-                title:course.name,
-                selected:true,
-                closable:true,
-                content:table
+            $("#tabs").tabs("add", {
+                title: course.name,
+                selected: true,
+                closable: true,
+                content: table
             });
-        },function (xhr) {
+        }, function (xhr) {
             alert(xhr.responseText);
         });
     };
+
+    $(function () {
+        $("#tabs").on('click', '.cq-radio', function () {
+            let vo = {
+                "courseId": $(this).data('course-id'),
+                "cadreId": $(this).data('cadre-id'),
+                "attendance": $(this).val()
+            };
+
+            $.ajax({
+                url: "/course/attendance",
+                type: "PUT",
+                data: JSON.stringify(vo),
+                dataType: "json",
+                contentType: "application/json"
+            }).then(function (msg) {
+                alert(msg.messageText);
+            },function (xhr) {
+                alert(xhr.responseText);
+            });
+        });
+    });
 </script>
 </body>
 </html>

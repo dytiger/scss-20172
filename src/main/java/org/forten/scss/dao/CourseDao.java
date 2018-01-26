@@ -19,4 +19,6 @@ public interface CourseDao {
     List<NameListVo> queryNameList(long courseId);
 
     List<AttendanceVo> queryForAttendance(long courseId);
+
+    void changeAttendance(AttendanceVo vo);
 }
