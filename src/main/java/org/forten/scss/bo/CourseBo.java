@@ -9,10 +9,7 @@ import org.forten.dto.PagedRo;
 import org.forten.scss.dao.CourseDao;
 import org.forten.scss.dto.qo.CourseQoForTeacher;
 import org.forten.scss.dto.ro.PagedRoForEasyUI;
-import org.forten.scss.dto.vo.AttendanceVo;
-import org.forten.scss.dto.vo.CourseForTeacher;
-import org.forten.scss.dto.vo.CourseUpdateForTeacher;
-import org.forten.scss.dto.vo.NameListVo;
+import org.forten.scss.dto.vo.*;
 import org.forten.scss.entity.Course;
 import org.forten.utils.system.BeanPropertyUtil;
 import org.forten.utils.system.ValidateUtil;
@@ -22,8 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Service("courseBo")
 public class CourseBo {
@@ -61,7 +57,7 @@ public class CourseBo {
     }
 
     @Transactional(readOnly = true)
-    @Cacheable(value = "testCache",key = "'courseBo.queryBy'")
+    @Cacheable(value = "testCache", key = "'courseBo.queryBy'")
     public PagedRoForEasyUI<CourseForTeacher> queryBy(CourseQoForTeacher qo) {
         CourseDao courseDao = getCourseDao();
 
@@ -91,23 +87,36 @@ public class CourseBo {
     }
 
     @Transactional(readOnly = true)
-    public List<NameListVo> queryNameList(long courseId){
+    public List<NameListVo> queryNameList(long courseId) {
         return getCourseDao().queryNameList(courseId);
     }
 
     @Transactional(readOnly = true)
-    public List<CourseForTeacher> queryFinised(){
+    public List<CourseForTeacher> queryFinised() {
         return getCourseDao().queryFinished();
     }
 
     @Transactional(readOnly = true)
-    public List<AttendanceVo> queryForAttendance(long coruseId){
+    public List<AttendanceVo> queryForAttendance(long coruseId) {
         return getCourseDao().queryForAttendance(coruseId);
     }
 
     @Transactional
-    public void doChangeAttendance(AttendanceVo vo){
+    public void doChangeAttendance(AttendanceVo vo) {
         getCourseDao().changeAttendance(vo);
+    }
+
+    @Transactional(readOnly = true)
+    public CoursePie queryForPie(long courseId) {
+        String hql = "SELECT name FROM Course WHERE id=:cId";
+        Map<String, Object> params = new HashMap<>();
+        params.put("cId",courseId);
+
+        String name = dao.findOneBy(hql, params);
+
+        Set<ScInfoPie> set = getCourseDao().findForPie(courseId);
+
+        return new CoursePie(name, set);
     }
 
     private CourseDao getCourseDao() {

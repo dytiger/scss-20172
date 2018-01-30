@@ -8,6 +8,14 @@
     <link rel="stylesheet" href="css/easyui.css"/>
     <link rel="stylesheet" href="css/color.css"/>
     <link rel="stylesheet" href="css/icon.css"/>
+    <link rel="stylesheet" href="css/uikit.css"/>
+    <style>
+        #pie-chart {
+            width: 600px;
+            height: 400px;
+        }
+
+    </style>
 </head>
 <body>
 <div class="container">
@@ -45,9 +53,11 @@
             <progress id="progressBar" value="0" max="100"></progress>
             <span id="target"></span>
         </div>
-        <div title="考勤维护">
+        <div title="已经完成课程列表">
             <div id="finished-tool-bar" style="padding:3px">
                 <a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="nameList()">人员名单</a>
+                <a href="#pie-area" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="showPie()"
+                   data-uk-modal="{center:true}">Pie</a>
             </div>
             <table id="finished-list"></table>
         </div>
@@ -157,11 +167,20 @@
     <input type="hidden" id="nl-credit" name="credit"/>
 </form>
 
+<div id="pie-area" class="uk-modal">
+    <div class="uk-modal-dialog uk-modal-dialog-lightbox" style="width: 600px;height: 400px;">
+        <a href="" class="uk-modal-close uk-close uk-close-alt"></a>
+        <div id="pie-chart"></div>
+    </div>
+</div>
+
 <script src="js/jquery-3.2.1.js"></script>
 <script src="js/bootstrap.js"></script>
 <script src="js/jquery-ui.js"></script>
 <script src="js/jquery.easyui.min.js"></script>
 <script src="js/easyui-lang-zh_CN.js"></script>
+<script src="js/uikit.js"></script>
+<script src="js/echarts.min.js"></script>
 <script>
     $('#course-list').datagrid({
         title: "课程列表",
@@ -419,11 +438,60 @@
                 contentType: "application/json"
             }).then(function (msg) {
                 alert(msg.messageText);
-            },function (xhr) {
+            }, function (xhr) {
                 alert(xhr.responseText);
             });
         });
     });
+
+    function showPie() {
+        let myChart = echarts.init(document.getElementById('pie-chart'));
+        let course = $("#finished-list").datagrid("getSelected");
+
+        $.ajax({
+            url: "/course/pie/" + course.idStr,
+            type: "GET",
+            contentType: "application/json"
+        }).then(function (si) {
+            let option = {
+                title: {
+                    text: si.courseName,
+                    subtext:"选课操作情况",
+                    left: "center",
+                    top:10
+                },
+                tooltip: {
+                    trigger: "item",
+                    formatter: "{a} <br/>{b} : {c} ({d}%)"
+                },
+                legend: {
+                    bottom:10,
+                    left: "center",
+                    data: ["选中", "排队", "退课"]
+                },
+                series: [
+                    {
+                        name: "人数",
+                        type: "pie",
+                        radius: "65%",
+                        center: ["50%", "50%"],
+                        selectedMode: 'single',
+                        data: si.scInfoSet
+                    }
+                ],
+                itemStyle: {
+                    emphasis: {
+                        shadowBlur: 10,
+                        shadowOffsetX: 5,
+                        shadowColor: 'rgba(0, 0, 0, 0.5)'
+                    }
+                }
+            };
+            myChart.setOption(option);
+        }, function (xhr) {
+            alert(xhr.responseText);
+        });
+    }
 </script>
 </body>
 </html>

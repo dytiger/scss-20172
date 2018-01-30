@@ -25,6 +25,11 @@
         <result property="tel" column="cadreTel"/>
     </resultMap>
 
+    <resultMap type="org.forten.scss.dto.vo.ScInfoPie" id="scInfoPieMap">
+        <result property="name" column="optType"/>
+        <result property="value" column="scCount"/>
+    </resultMap>
+
     <resultMap type="org.forten.scss.dto.vo.AttendanceVo" id="attendanceMap">
         <result property="courseId" column="courseId"/>
         <result property="cadreId" column="cadreId"/>
@@ -120,6 +125,21 @@
           FROM course c JOIN sc_info si ON (c.id=si.course_id)
             JOIN cadre ca ON (ca.id=si.cadre_id)
           WHERE si.course_id=#{courseId} AND si.opt_type="XK"
+        ]]>
+    </select>
+
+    <select id="findForPie" resultMap="scInfoPieMap" parameterType="long">
+        <![CDATA[
+          SELECT count(cadre_id) scCount,
+            CASE
+                WHEN opt_type='XK' THEN '选中'
+                WHEN opt_type='TK' THEN '退课'
+                ELSE '排队'
+            END
+            optType
+          FROM sc_info
+          WHERE course_id=#{courseId}
+          GROUP BY opt_type;
         ]]>
     </select>
 

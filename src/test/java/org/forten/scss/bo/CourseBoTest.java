@@ -6,6 +6,7 @@ import org.forten.dto.PagedRo;
 import org.forten.scss.dto.qo.CourseQoForTeacher;
 import org.forten.scss.dto.ro.PagedRoForEasyUI;
 import org.forten.scss.dto.vo.CourseForTeacher;
+import org.forten.scss.dto.vo.CoursePie;
 import org.forten.scss.dto.vo.CourseUpdateForTeacher;
 import org.forten.scss.entity.Course;
 import org.forten.utils.common.DateUtil;
@@ -108,5 +109,11 @@ public class CourseBoTest extends BaseTest {
 //        ro = bo.queryBy(qo);
 //        assertEquals(true,ro.isEmptyData());
 //        assertEquals(0,ro.getRows().size());
+    }
+
+    @Test
+    public void testPie(){
+        CoursePie pie = bo.queryForPie(4);
+        System.out.println(pie);
     }
 }

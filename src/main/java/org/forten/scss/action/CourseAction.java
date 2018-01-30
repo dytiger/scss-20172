@@ -222,4 +222,9 @@ public class CourseAction {
             return Message.error("考勤维护失败！");
         }
     }
+
+    @GetMapping("/course/pie/{courseId}")
+    public CoursePie getPie(@PathVariable long courseId){
+        return bo.queryForPie(courseId);
+    }
 }
