@@ -128,32 +128,32 @@ public class SelectCourseBo {
     public void sendRemindEmail() {
         SelectCourseDao dao = getSelectCourseDao();
         List<CourseVoForSelect> voList = dao.findWillTeached();
+        SimpleEmail email = new SimpleEmail();
+        try {
+            email.setAuthentication(getValue("system/email", "USERNAME"), getValue("system/email", "PASSWORD"));
+            email.setCharset("UTF-8");
+            email.setFrom(getValue("system/email", "FROM"));
+            email.setSSLOnConnect(true);
+            email.setHostName(getValue("system/email", "HOST"));
+            email.setSmtpPort(NumberUtil.parseNumber(getValue("system/email", "PORT"), Integer.class));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         for (CourseVoForSelect vo : voList) {
             List<String> emails = dao.findEmails(vo.getId());
 
-            SimpleEmail email = new SimpleEmail();
-            try {
-                email.setAuthentication(getValue("system/email", "USERNAME"), getValue("system/email", "PASSWORD"));
-                email.setCharset("UTF-8");
-                email.setFrom(getValue("system/email", "FROM"));
-                email.setSSLOnConnect(true);
-                email.setHostName(getValue("system/email","HOST"));
-                email.setSmtpPort(NumberUtil.parseNumber(getValue("system/email","PORT"),Integer.class));
-            }catch(Exception e){
-                e.printStackTrace();
-            }
 
             try {
                 email.addTo(emails.toArray(new String[emails.size()]));
                 email.setSubject("<" + vo.getName() + ">开课通知");
 
                 Template template = fmc.getConfiguration().getTemplate("email.ftl");
-                Map<String,Object> data = new HashMap<>();
-                data.put("name",vo.getName());
-                data.put("begin",DateUtil.convertDateToString(vo.getBeginTeachTime(),"MM月dd日HH:mm"));
-                data.put("classroom",vo.getClassroom());
+                Map<String, Object> data = new HashMap<>();
+                data.put("name", vo.getName());
+                data.put("begin", DateUtil.convertDateToString(vo.getBeginTeachTime(), "MM月dd日HH:mm"));
+                data.put("classroom", vo.getClassroom());
 
-                String msg = FreeMarkerTemplateUtils.processTemplateIntoString(template,data);
+                String msg = FreeMarkerTemplateUtils.processTemplateIntoString(template, data);
                 System.out.println(msg);
                 email.setMsg(msg);
 
