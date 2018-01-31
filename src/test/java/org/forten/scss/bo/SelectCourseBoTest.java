@@ -46,6 +46,11 @@ public class SelectCourseBoTest extends BaseTest{
     }
 
     @Test
+    public void testSendRemindEmail(){
+        bo.sendRemindEmail();
+    }
+
+    @Test
     public void testDoSelectCourse(){
         SelectInfoVoForWrite vo = new SelectInfoVoForWrite(1,20,"XK",3);
         Message m = bo.doSelectCourse(vo);

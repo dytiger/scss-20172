@@ -27,4 +27,8 @@ public interface SelectCourseDao {
     Integer queryCreditForCount(CreditQoForCount qo);
 
     Integer queryCreditForNotBegin(long cadreId);
+
+    List<CourseVoForSelect> findWillTeached();
+
+    List<String> findEmails(@Param("courseId") long courseId);
 }

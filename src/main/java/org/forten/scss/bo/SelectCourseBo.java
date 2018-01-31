@@ -1,5 +1,9 @@
 package org.forten.scss.bo;
 
+import com.sun.mail.util.MailSSLSocketFactory;
+import freemarker.template.Template;
+import org.apache.commons.mail.Email;
+import org.apache.commons.mail.SimpleEmail;
 import org.forten.dao.HibernateDao;
 import org.forten.dao.MybatisDao;
 import org.forten.dto.Message;
@@ -8,12 +12,24 @@ import org.forten.scss.dto.qo.CreditQoForCount;
 import org.forten.scss.dto.vo.CourseVoForSelect;
 import org.forten.scss.dto.vo.SelectInfoVoForWrite;
 import org.forten.scss.entity.SysParams;
+import org.forten.utils.common.DateUtil;
+import org.forten.utils.common.NumberUtil;
+import org.forten.utils.common.StringUtil;
+import org.forten.utils.system.PropertiesFileReader;
+import org.springframework.mail.MailSender;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
+import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 
 import javax.annotation.Resource;
-import java.util.Date;
-import java.util.List;
+import java.security.GeneralSecurityException;
+import java.util.*;
+
+import static org.forten.utils.system.PropertiesFileReader.getValue;
 
 @Service
 public class SelectCourseBo {
@@ -21,6 +37,8 @@ public class SelectCourseBo {
     private MybatisDao mybatisDao;
     @Resource
     private HibernateDao dao;
+    @Resource
+    private FreeMarkerConfigurer fmc;
 
     @Transactional(readOnly = true)
     public List<CourseVoForSelect> queryForSelect(long cadreId) {
@@ -41,7 +59,7 @@ public class SelectCourseBo {
     public Message doSelectCourse(SelectInfoVoForWrite vo) {
         long cadreId = vo.getCadreId();
         int maxCredit = dao.loadById(SysParams.class, "MAX_CREDIT").getIntValue();
-        if(getCurrentCredit(cadreId)+getNotBeginCredit(cadreId)+vo.getCredit()>maxCredit){
+        if (getCurrentCredit(cadreId) + getNotBeginCredit(cadreId) + vo.getCredit() > maxCredit) {
             return Message.warn("因已经超过学分上限，您暂时不可以选择此课程。");
         }
         try {
@@ -93,11 +111,11 @@ public class SelectCourseBo {
         int c = getCurrentCredit(cadreId);
         int nc = getNotBeginCredit(cadreId);
 
-        String msg = "目前您已经学习课程的学分总数为：" + c + "分，未学习课程学分为："+nc+"分<br>在" + beginDate + "至" + endDate + "时间段内，您应该修习的学分为" + minCredit + "~" + maxCredit + "分";
+        String msg = "目前您已经学习课程的学分总数为：" + c + "分，未学习课程学分为：" + nc + "分<br>在" + beginDate + "至" + endDate + "时间段内，您应该修习的学分为" + minCredit + "~" + maxCredit + "分";
         return Message.info(msg);
     }
 
-    private int getNotBeginCredit(long cadreId){
+    private int getNotBeginCredit(long cadreId) {
         Integer c = getSelectCourseDao().queryCreditForNotBegin(cadreId);
         if (c == null) {
             c = 0;
@@ -106,7 +124,47 @@ public class SelectCourseBo {
         return c;
     }
 
-    private int getCurrentCredit(long cadreId){
+    @Transactional(readOnly = true)
+    public void sendRemindEmail() {
+        SelectCourseDao dao = getSelectCourseDao();
+        List<CourseVoForSelect> voList = dao.findWillTeached();
+        for (CourseVoForSelect vo : voList) {
+            List<String> emails = dao.findEmails(vo.getId());
+
+            SimpleEmail email = new SimpleEmail();
+            try {
+                email.setAuthentication(getValue("system/email", "USERNAME"), getValue("system/email", "PASSWORD"));
+                email.setCharset("UTF-8");
+                email.setFrom(getValue("system/email", "FROM"));
+                email.setSSLOnConnect(true);
+                email.setHostName(getValue("system/email","HOST"));
+                email.setSmtpPort(NumberUtil.parseNumber(getValue("system/email","PORT"),Integer.class));
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+
+            try {
+                email.addTo(emails.toArray(new String[emails.size()]));
+                email.setSubject("<" + vo.getName() + ">开课通知");
+
+                Template template = fmc.getConfiguration().getTemplate("email.ftl");
+                Map<String,Object> data = new HashMap<>();
+                data.put("name",vo.getName());
+                data.put("begin",DateUtil.convertDateToString(vo.getBeginTeachTime(),"MM月dd日HH:mm"));
+                data.put("classroom",vo.getClassroom());
+
+                String msg = FreeMarkerTemplateUtils.processTemplateIntoString(template,data);
+                System.out.println(msg);
+                email.setMsg(msg);
+
+                email.send();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private int getCurrentCredit(long cadreId) {
         Date begin = dao.loadById(SysParams.class, "COUNT_BEGIN_DATE").getTimeValue();
         Date end = dao.loadById(SysParams.class, "COUNT_END_DATE").getTimeValue();
 
