@@ -142,7 +142,6 @@ public class SelectCourseBo {
         for (CourseVoForSelect vo : voList) {
             List<String> emails = dao.findEmails(vo.getId());
 
-
             try {
                 email.addTo(emails.toArray(new String[emails.size()]));
                 email.setSubject("<" + vo.getName() + ">开课通知");
